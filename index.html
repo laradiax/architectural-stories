@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architectural Stories - O Jogo de Padrões</title>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel para JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        @keyframes slide-up {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-up {
+            animation: slide-up 0.3s ease-out forwards;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.2s ease-out forwards;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+
+        // --- COMPONENTE DE ÍCONES (SVG Inline) ---
+        const Icon = {
+            Book: ({ size = 20, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
+            ),
+            Info: ({ size = 20 }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+            ),
+            X: ({ size = 20 }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+            ),
+            Play: ({ size = 20 }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+            ),
+            Home: ({ size = 20 }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+            ),
+            HelpCircle: ({ size = 20 }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            )
+        };
+
+
+        // --- DADOS DOS PADRÕES ---
+            const patternsLibrary = [
+                {
+                    id: "camadas",
+                    name: "Camadas (Layers)",
+                    desc: "Organiza o código em camadas com responsabilidades específicas (ex: Apresentação, Negócio, Dados), comunicando-se apenas com a camada inferior.",
+                    pros: "Alta manutenibilidade, organização e separação de responsabilidades.",
+                    cons: "Pode causar pequena latência e aumentar a complexidade inicial."
+                },
+                {
+                    id: "client_server",
+                    name: "Cliente-Servidor",
+                    desc: "Divide o sistema em Servidor (dados e lógica) e Clientes (interface).",
+                    pros: "Centralização, segurança e facilidade de manutenção.",
+                    cons: "Ponto único de falha e risco de sobrecarga no servidor."
+                },
+                {
+                    id: "mvc",
+                    name: "Model-View-Controller (MVC)",
+                    desc: "Separa a interface em Model (dados), View (interface) e Controller (controle).",
+                    pros: "Separação de responsabilidades, manutenção e testabilidade.",
+                    cons: "Maior complexidade para gerenciar o estado entre os componentes."
+                },
+                {
+                    id: "pipe_filter",
+                    name: "Pipe and Filter",
+                    desc: "Processa dados em etapas independentes conectadas por pipes, onde a saída de um filtro é a entrada do próximo.",
+                    pros: "Flexibilidade, reutilização e testabilidade.",
+                    cons: "Custo de performance e necessidade de padronização dos dados."
+                },
+                {
+                    id: "eda",
+                    name: "Event-Driven Architecture",
+                    desc: "Componentes reagem a eventos de forma assíncrona, sem dependência direta entre produtor e consumidor.",
+                    pros: "Desacoplamento, escalabilidade e resiliência.",
+                    cons: "Complexidade de depuração e consistência eventual dos dados."
+                },
+                {
+                    id: "soa",
+                    name: "Service-Oriented Architecture (SOA)",
+                    desc: "Integra sistemas corporativos por meio de serviços de negócio reutilizáveis, orquestrados por um barramento de serviços (ESB).",
+                    pros: "Reutilização, consistência e governança centralizada.",
+                    cons: "Alta complexidade e menor autonomia das equipes."
+                },
+                {
+                    id: "pub_sub",
+                    name: "Publish–Subscribe (Pub/Sub)",
+                    desc: "Desacopla publicadores e assinantes por meio de tópicos de mensagens.",
+                    pros: "Alta escalabilidade e flexibilidade.",
+                    cons: "Dificuldade de depuração e falta de garantias de entrega."
+                },
+                {
+                    id: "microsservicos",
+                    name: "Microsserviços",
+                    desc: "Organiza o sistema em pequenos serviços independentes, cada um com sua própria lógica e banco de dados.",
+                    pros: "Autonomia, escalabilidade e resiliência.",
+                    cons: "Complexidade operacional, latência e dificuldade de depuração."
+                },
+                {
+                    id: "microkernel",
+                    name: "Microkernel",
+                    desc: "Define um núcleo mínimo com funções essenciais, enquanto funcionalidades extras são implementadas como plugins.",
+                    pros: "Extensibilidade, flexibilidade e estabilidade.",
+                    cons: "API complexa e comunicação potencialmente lenta."
+                },
+                {
+                    id: "broker",
+                    name: "Broker",
+                    desc: "Um intermediário gerencia a comunicação entre produtores e consumidores (ex.: filas de mensagens).",
+                    pros: "Desacoplamento temporal, resiliência e controle de picos de carga.",
+                    cons: "Pode tornar-se um ponto único de falha e gargalo."
+                },
+                {
+                    id: "p2p",
+                    name: "Peer-to-Peer (P2P)",
+                    desc: "Rede descentralizada onde cada nó atua como cliente e servidor simultaneamente, sem servidor central.",
+                    pros: "Escalabilidade e alta resiliência a falhas.",
+                    cons: "Desafios de segurança, descoberta de pares e ausência de controle central."
+                },
+                {
+                    id: "hexagonal",
+                    name: "Hexagonal Architecture (Ports and Adapters)",
+                    desc: "Separa o núcleo da aplicação da infraestrutura por meio de portas e adaptadores.",
+                    pros: "Alta testabilidade e flexibilidade.",
+                    cons: "Complexidade inicial elevada com muitas interfaces."
+                },
+                {
+                    id: "saga",
+                    name: "Saga Pattern",
+                    desc: "Gerencia transações distribuídas por meio de etapas locais e ações de compensação.",
+                    pros: "Consistência de dados em sistemas distribuídos.",
+                    cons: "Implementação e depuração extremamente complexas."
+                },
+                {
+                    id: "adapter",
+                    name: "Adapter",
+                    desc: "Converte a interface de um componente noutra esperada pelo cliente, permitindo integração entre sistemas.",
+                    pros: "Reutilização e compatibilidade com sistemas legados.",
+                    cons: "Introduz uma camada extra que aumenta a complexidade."
+                },
+                {
+                    id: "facade",
+                    name: "Facade",
+                    desc: "Cria uma interface simplificada para um subsistema complexo, escondendo detalhes internos.",
+                    pros: "Reduz acoplamento e melhora a legibilidade.",
+                    cons: "Pode concentrar lógica e tornar-se um ponto crítico de manutenção."
+                },
+                {
+                    id: "proxy",
+                    name: "Proxy",
+                    desc: "Controla o acesso a um objeto real, adicionando funcionalidades como cache, segurança ou lazy loading.",
+                    pros: "Separação de responsabilidades e melhoria de performance.",
+                    cons: "Pequena latência e aumento de complexidade."
+                },
+                {
+                    id: "mediator",
+                    name: "Mediator",
+                    desc: "Centraliza a comunicação entre objetos, evitando interações diretas muitos-para-muitos.",
+                    pros: "Desacoplamento entre componentes.",
+                    cons: "O mediador pode tornar-se complexo e um ponto único de falha."
+                },
+                {
+                    id: "message_bus",
+                    name: "Message Bus (ESB)",
+                    desc: "Infraestrutura centralizada onde múltiplos sistemas trocam mensagens padronizadas.",
+                    pros: "Integração padronizada entre sistemas.",
+                    cons: "Ponto único de falha e gargalo complexo de gerir."
+                },
+                {
+                    id: "blackboard",
+                    name: "Blackboard",
+                    desc: "Especialistas independentes colaboram escrevendo descobertas parciais num espaço compartilhado até a solução emergir.",
+                    pros: "Flexibilidade para problemas sem solução clara.",
+                    cons: "Altíssima complexidade de implementação e depuração."
+                }
+            ];
+
+
+        const gameCards = [
+                {
+                    id: 1,
+                    title: "O Código Misturado",
+                    problem: "Um programador foi solicitado a alterar a cor de um botão na tela de login. Para fazer isso, ele precisou editar arquivos que também continham lógica de validação de senha (negócio) e comandos de banco de dados (dados). A simples mudança visual acabou gerando um bug que corrompeu dados.",
+                    correctId: "camadas",
+                    reason: "A Arquitetura em Camadas separa Apresentação, Negócio e Dados, evitando que alterações visuais afetem dados ou regras."
+                },
+                {
+                    id: 2,
+                    title: "A Lógica Intestável",
+                    problem: "Uma equipe de testes foi solicitada a validar uma nova regra de cálculo de juros. Eles disseram ser impossível testar apenas a regra, pois ela estava implementada dentro do código do clique do botão da tela, que exigia um banco de dados e um servidor web ligados para funcionar.",
+                    correctId: "camadas",
+                    reason: "Isolar a lógica de negócio em uma camada própria permite testes unitários sem interface ou banco de dados."
+                },
+                {
+                    id: 3,
+                    title: "A Planilha do Caos",
+                    problem: "Uma pequena empresa gerencia seus 50 clientes em uma única planilha do Excel, que fica em uma pasta compartilhada na rede. Quando dois vendedores abrem o arquivo ao mesmo tempo e salvam, o último a salvar sobrescreve o trabalho do outro, perdendo dados.",
+                    correctId: "client_server",
+                    reason: "O modelo Cliente-Servidor centraliza os dados e controla a concorrência."
+                },
+                {
+                    id: 4,
+                    title: "O Arquivo de 5.000 Linhas",
+                    problem: "Em um sistema web, uma única página tem 5.000 linhas. Ela contém código HTML para desenhar a tela, lógica de validação de CPF e comandos SQL para salvar o usuário. O problema é que dar manutenção é um pesadelo; qualquer mudança é arriscada.",
+                    correctId: "mvc",
+                    reason: "O MVC separa Model, View e Controller, reduzindo acoplamento e facilitando manutenção."
+                },
+                {
+                    id: 5,
+                    title: "O Processador de Mídia Inflexível",
+                    problem: "Um sistema de conversão de vídeo precisa realizar três tarefas: alterar a resolução, adicionar uma marca d’água e comprimir o arquivo. A equipe escreveu uma única função que faz as três coisas juntas. Agora, um cliente quer apenas adicionar a marca d’água, mas sem alterar a resolução, o que é impossível sem copiar código.",
+                    correctId: "pipe_filter",
+                    reason: "Pipe and Filter divide o processamento em filtros independentes e reutilizáveis."
+                },
+                {
+                    id: 6,
+                    title: "A Compra Travada",
+                    problem: "Em um e-commerce, o sistema de Pedidos precisa chamar diretamente os sistemas de Pagamento, Estoque e Email. O problema é que, se o sistema de Email estiver lento ou falhar, a compra inteira do cliente trava e falha.",
+                    correctId: "eda",
+                    reason: "A Arquitetura Orientada a Eventos desacopla os sistemas com comunicação assíncrona."
+                },
+                {
+                    id: 7,
+                    title: "A Integração Ponto a Ponto",
+                    problem: "Uma empresa possui cinco sistemas legados (Finanças, RH e Vendas). Para contratar um novo vendedor, o sistema de RH precisa fazer chamadas diretas para os outros. Se um sistema falhar, o processo inteiro para e fica inconsistente.",
+                    correctId: "soa",
+                    reason: "A SOA integra sistemas por serviços orquestrados por um barramento."
+                },
+                {
+                    id: 8,
+                    title: "O Feed de Notícias Inflexível",
+                    problem: "Um portal de notícias quer enviar atualizações. A equipe de Esportes precisa saber a lista exata de todos os usuários que querem receber notícias de esportes. A equipe de Política precisa de outra lista. O problema é que o publicador está fortemente acoplado aos assinantes.",
+                    correctId: "pub_sub",
+                    reason: "Publish–Subscribe desacopla publicadores e assinantes por tópicos."
+                },
+                {
+                    id: 9,
+                    title: "O Sistema que Não Aguentou o Sucesso",
+                    problem: "Um aplicativo de pedidos online explodiu em popularidade. A equipe dobrou a capacidade dos servidores, mas em horários de pico o sistema inteiro congela. Clientes não conseguem nem fazer login.",
+                    correctId: "microsservicos",
+                    reason: "Microsserviços permitem escalar partes do sistema de forma independente."
+                },
+                {
+                    id: 10,
+                    title: "O Navegador Instável",
+                    problem: "Uma equipe está projetando um novo navegador web. Eles querem manter o núcleo pequeno e rápido, mas há pedidos para funções complexas como bloqueador de anúncios e tradutor, que podem comprometer a estabilidade.",
+                    correctId: "microkernel",
+                    reason: "O Microkernel mantém o núcleo mínimo e adiciona funcionalidades como plugins."
+                },
+                {
+                    id: 11,
+                    title: "A Fila de Tarefas",
+                    problem: "Um site permite o upload de fotos. O processamento demora 30 segundos. O usuário fica preso na tela de carregamento esperando o processamento terminar, gerando má experiência e sobrecarga no servidor.",
+                    correctId: "broker",
+                    reason: "O Broker usa filas para desacoplar produtor e consumidor."
+                },
+                {
+                    id: 12,
+                    title: "O Servidor Sobrecarregado",
+                    problem: "Uma empresa quer distribuir um arquivo grande para 1 milhão de usuários. Se todos baixarem de um servidor central, o custo de banda será altíssimo e o servidor ficará lento.",
+                    correctId: "p2p",
+                    reason: "Peer-to-Peer distribui a carga entre os próprios usuários."
+                },
+                {
+                    id: 13,
+                    title: "O Coração Isolado",
+                    problem: "Uma equipe quer testar sua lógica de negócio, mas precisa iniciar servidor web, banco de dados real e simular cliques. A lógica está misturada com tecnologia de interface e banco.",
+                    correctId: "hexagonal",
+                    reason: "A Arquitetura Hexagonal isola o núcleo da aplicação das tecnologias externas."
+                },
+                {
+                    id: 14,
+                    title: "A Transação Interminável",
+                    problem: "Em uma compra, o sistema precisa reservar estoque, processar pagamento e enviar e-mail. Se o envio de e-mail falhar, toda a transação sofre rollback, mesmo o e-mail não sendo crítico.",
+                    correctId: "saga",
+                    reason: "O Saga Pattern divide a transação em passos com compensações."
+                },
+                {
+                    id: 15,
+                    title: "O Legado que Recebe XML",
+                    problem: "Um sistema novo envia dados em JSON, mas precisa comunicar-se com um sistema legado que só aceita XML. As duas pontas não conseguem se comunicar.",
+                    correctId: "adapter",
+                    reason: "O Adapter traduz interfaces incompatíveis."
+                },
+                {
+                    id: 16,
+                    title: "O Aplicativo com Muitas Chamadas",
+                    problem: "Um aplicativo móvel precisa carregar sua tela inicial fazendo oito chamadas de rede para serviços diferentes, tornando o app lento e a lógica complexa.",
+                    correctId: "facade",
+                    reason: "A Facade centraliza a orquestração e reduz chamadas remotas."
+                },
+                {
+                    id: 17,
+                    title: "A Imagem Fantasma",
+                    problem: "Uma página web precisa carregar 100 fotos de alta resolução. Se carregar todas de uma vez, a página demora minutos para abrir.",
+                    correctId: "proxy",
+                    reason: "O Proxy permite Lazy Loading de objetos pesados."
+                },
+                {
+                    id: 18,
+                    title: "A Torre de Controle Aéreo",
+                    problem: "Vários aviões querem usar a mesma pista. Se tentarem negociar diretamente entre si, há risco alto de colisão.",
+                    correctId: "mediator",
+                    reason: "O Mediator centraliza a coordenação de recursos compartilhados."
+                },
+                {
+                    id: 19,
+                    title: "O Barramento Corporativo",
+                    problem: "Uma empresa possui dezenas de sistemas integrados ponto a ponto. O resultado é um caos de integrações frágeis e difíceis de manter.",
+                    correctId: "message_bus",
+                    reason: "O Message Bus padroniza a comunicação entre sistemas."
+                },
+                {
+                    id: 20,
+                    title: "O Reconhecimento Impossível",
+                    problem: "Um sistema de reconhecimento de texto manuscrito não possui um algoritmo único eficaz. Diferentes algoritmos são bons em partes diferentes do problema.",
+                    correctId: "blackboard",
+                    reason: "O Blackboard permite que vários especialistas cooperem para uma solução emergente."
+                }
+            ];
+
+
+
+
+        // --- COMPONENTES UI ---
+
+
+        const ManualModal = ({ onClose }) => (
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[70] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
+                    <div className="bg-slate-900 border border-slate-700 max-w-3xl w-full max-h-[90vh] rounded-[2rem] p-0 shadow-2xl animate-slide-up flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+
+                        {/* Cabeçalho */}
+                        <div className="p-8 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-blue-600/20 text-blue-400 rounded-xl border border-blue-500/30">
+                                    <Icon.Book size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-black text-white">Manual de Campo</h3>
+                                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Protocolo de Investigação v3.0</p>
+                                </div>
+                            </div>
+                            <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors">
+                                <Icon.X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Conteúdo com Scroll */}
+                        <div className="overflow-y-auto p-8 custom-scrollbar space-y-8 bg-slate-900">
+
+                            {/* Missão */}
+                            <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-900/40 to-slate-800 border border-blue-500/20 p-6">
+                                <div className="relative z-10">
+                                    <h4 className="text-blue-300 font-black uppercase text-xs tracking-widest mb-2 flex items-center gap-2">
+                                        <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                                        A Missão
+                                    </h4>
+                                    <p className="text-slate-200 text-lg leading-relaxed font-medium">
+                                        Um sistema crítico entrou em colapso e seu código se tornou um labirinto de enigmas. Você foi convocado como <span className="text-blue-400 font-bold">Mestre da Arquitetura</span> para decifrar os <span className="text-yellow-400 font-bold">Enigmas</span>, diagnosticar as falhas e aplicar a <span className="text-green-400 font-bold">Solução Arquitetural</span> que salvará o projeto.
+                                    </p>
+                                </div>
+                            </section>
+
+                            {/* Fluxo Operacional */}
+                            <section>
+                                <h4 className="text-slate-500 font-black uppercase text-xs tracking-widest mb-4">Fluxo da Investigação</h4>
+                                <div className="grid md:grid-cols-3 gap-4">
+                                    <div className="bg-slate-800/50 p-5 rounded-xl border border-slate-700 hover:border-blue-500/50 transition-colors group">
+                                        <div className="text-yellow-500 mb-3 group-hover:scale-110 transition-transform"><Icon.Book size={28} /></div>
+                                        <h5 className="font-bold text-white mb-2">1. O Enigma</h5>
+                                        <p className="text-sm text-slate-400 leading-snug">Analise o relatório do incidente. Onde está o gargalo? Latência, acoplamento excessivo ou falhas de resiliência? Identifique o verdadeiro Enigma.</p>
+                                    </div>
+                                    <div className="bg-slate-800/50 p-5 rounded-xl border border-slate-700 hover:border-blue-500/50 transition-colors group">
+                                        <div className="text-blue-400 mb-3 group-hover:scale-110 transition-transform"><Icon.HelpCircle size={28} /></div>
+                                        <h5 className="font-bold text-white mb-2">2. A Consulta</h5>
+                                        <p className="text-sm text-slate-400 leading-snug">
+                                            Não tente adivinhar. Use o ícone <span className="inline-flex align-middle justify-center bg-slate-700 p-0.5 rounded text-blue-300 mx-1"><Icon.Info size={14} /></span> para consultar as fichas técnicas dos padrões suspeitos antes de propor sua <span className="text-green-400 font-bold">Solução</span>.
+                                        </p>
+                                    </div>
+                                    <div className="bg-slate-800/50 p-5 rounded-xl border border-slate-700 hover:border-blue-500/50 transition-colors group">
+                                        <div className="text-green-400 mb-3 group-hover:scale-110 transition-transform"><Icon.Play size={28} /></div>
+                                        <h5 className="font-bold text-white mb-2">3. O Veredito</h5>
+                                        <p className="text-sm text-slate-400 leading-snug">Aplique sua <span className="text-green-400 font-bold">Solução Arquitetural</span>. Se acertar, você desbloqueará o raciocínio por trás do Enigma e será reconhecido como <span className="text-blue-400 font-bold">Mestre da Arquitetura</span>.</p>
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* Dicas e Meta */}
+                            <section className="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <h4 className="text-slate-500 font-black uppercase text-xs tracking-widest mb-3">Notas de Campo</h4>
+                                    <ul className="space-y-3 text-sm text-slate-300">
+                                        <li className="flex gap-3 bg-slate-800/30 p-3 rounded-lg border border-slate-700/50">
+                                            <div className="mt-0.5 text-blue-400"><Icon.Info size={16} /></div>
+                                            <span><strong>Sem Penalidade:</strong> Consultar as fichas técnicas e padrões não retira pontos. Um verdadeiro Mestre da Arquitetura sempre valida suas hipóteses.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-slate-800 p-5 rounded-2xl border border-slate-700 flex flex-col justify-center relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10 text-yellow-500"><Icon.Book size={80} /></div>
+                                    <div className="relative z-10">
+                                        <div className="flex justify-between items-end mb-2">
+                                            <span className="text-yellow-500 font-black uppercase text-xs tracking-widest">Objetivo Final</span>
+                                            <span className="text-2xl font-black text-white">20 Enigmas</span>
+                                        </div>
+                                        <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden mb-2 border border-slate-700">
+                                            <div className="bg-yellow-500 h-full w-3/4 opacity-80"></div>
+                                        </div>
+                                        <p className="text-xs text-slate-400">Resolva todos os Enigmas para conquistar o título honorário de <span className="text-yellow-400 font-bold">Mestre da Arquitetura</span>.</p>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        {/* Botão de Ação */}
+                        <div className="p-6 border-t border-slate-800 bg-slate-900/90 backdrop-blur-md">
+                            <button onClick={onClose} className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-black text-lg tracking-wide transition-all shadow-[0_4px_0_#1e40af] active:shadow-none active:translate-y-1 active:bg-blue-700">
+                                JOGAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+
+
+        const PatternsLibraryModal = ({ onClose }) => (
+                <div
+                    className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4 animate-fade-in"
+                    onClick={onClose}
+                >
+                    <div
+                        className="bg-slate-900 border border-slate-700 max-w-4xl w-full max-h-[90vh] rounded-[2rem] shadow-2xl animate-slide-up flex flex-col overflow-hidden"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* Cabeçalho */}
+                        <div className="p-6 border-b border-slate-800 flex justify-between items-center">
+                            <h3 className="text-2xl font-black text-yellow-400">
+                                Biblioteca de Padrões Arquiteturais
+                            </h3>
+                            <button
+                                onClick={onClose}
+                                className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full"
+                            >
+                                <Icon.X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Lista */}
+                        <div className="overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                            {patternsLibrary.map(pattern => (
+                                <div
+                                    key={pattern.id}
+                                    className="bg-slate-800 border border-slate-700 rounded-2xl p-5 hover:border-yellow-500/50 transition-colors"
+                                >
+                                    <h4 className="text-xl font-bold text-blue-400 mb-2">
+                                        {pattern.name}
+                                    </h4>
+                                    <p className="text-slate-300 mb-4 italic">
+                                        {pattern.desc}
+                                    </p>
+
+                                    <div className="grid md:grid-cols-2 gap-3 text-sm">
+                                        <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-3">
+                                            <span className="block text-green-400 font-bold uppercase text-xs mb-1">
+                                                Ganhos
+                                            </span>
+                                            {pattern.pros}
+                                        </div>
+
+                                        <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-3">
+                                            <span className="block text-red-400 font-bold uppercase text-xs mb-1">
+                                                Perdas
+                                            </span>
+                                            {pattern.cons}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Rodapé */}
+                        <div className="p-6 border-t border-slate-800">
+                            <button
+                                onClick={onClose}
+                                className="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 py-4 rounded-xl font-black text-lg transition-all"
+                            >
+                                Voltar ao Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+
+
+
+
+        const InfoModal = ({ pattern, onClose }) => {
+            if (!pattern) return null;
+            return (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[70] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
+                    <div className="bg-slate-800 border border-slate-600 max-w-md w-full rounded-2xl p-6 shadow-2xl animate-slide-up" onClick={e => e.stopPropagation()}>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-2xl font-bold text-blue-400">{pattern.name}</h3>
+                            <button onClick={onClose} className="p-2 hover:bg-slate-700 rounded-lg"><Icon.X /></button>
+                        </div>
+                        <p className="text-slate-300 mb-6 italic leading-relaxed">{pattern.desc}</p>
+                        <div className="space-y-3">
+                            <div className="bg-green-900/20 border border-green-500/30 p-3 rounded-xl">
+                                <span className="text-green-400 font-bold text-xs uppercase block mb-1">Ganhos</span>
+                                <span className="text-sm text-slate-200">{pattern.pros}</span>
+                            </div>
+                            <div className="bg-red-900/20 border border-red-500/30 p-3 rounded-xl">
+                                <span className="text-red-400 font-bold text-xs uppercase block mb-1">Perdas</span>
+                                <span className="text-sm text-slate-200">{pattern.cons}</span>
+                            </div>
+                        </div>
+                        <button onClick={onClose} className="w-full mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors">Voltar</button>
+                    </div>
+                </div>
+            );
+        };
+
+
+        const ExitConfirmation = ({ onConfirm, onCancel }) => (
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center p-4 animate-fade-in">
+                <div className="bg-slate-900 border border-slate-700 max-w-sm w-full rounded-3xl p-8 text-center animate-slide-up">
+                    <h3 className="text-2xl font-black mb-4">Abandonar Investigação?</h3>
+                    <p className="text-slate-400 mb-8">O teu progresso atual será perdido.</p>
+                    <div className="flex flex-col gap-3">
+                        <button onClick={onConfirm} className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl transition-all">Sair</button>
+                        <button onClick={onCancel} className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-4 rounded-xl transition-all">Continuar</button>
+                    </div>
+                </div>
+            </div>
+        );
+
+
+        const App = () => {
+            const [gameState, setGameState] = useState('menu');
+            const [currentIdx, setCurrentIdx] = useState(0);
+            const [score, setScore] = useState(0);
+            const [selected, setSelected] = useState(null);
+            const [feedback, setFeedback] = useState(false);
+            const [inspecting, setInspecting] = useState(null);
+            const [showManual, setShowManual] = useState(false);
+            const [confirmExit, setConfirmExit] = useState(false);
+            const [options, setOptions] = useState([]);
+            const [showPatternsLibrary, setShowPatternsLibrary] = useState(false);
+
+
+
+            const currentCard = useMemo(() => gameCards[currentIdx], [currentIdx]);
+
+
+            useEffect(() => {
+                if (gameState === 'game' && currentCard) {
+                    const correct = patternsLibrary.find(p => p.id === currentCard.correctId);
+                    // Pega 2 errados aleatórios da biblioteca
+                    const others = patternsLibrary
+                        .filter(p => p.id !== currentCard.correctId)
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 2);
+                    setOptions([correct, ...others].sort(() => 0.5 - Math.random()));
+                    setSelected(null);
+                    setFeedback(false);
+                }
+            }, [currentIdx, gameState, currentCard]);
+
+
+            const handleAnswer = (id) => {
+                if (feedback) return;
+                setSelected(id);
+                setFeedback(true);
+                if (id === currentCard.correctId) setScore(s => s + 1);
+            };
+
+
+            const resetToMenu = () => {
+                setGameState('menu');
+                setCurrentIdx(0);
+                setScore(0);
+                setConfirmExit(false);
+            };
+
+
+            const next = () => {
+                if (currentIdx < gameCards.length - 1) {
+                    setCurrentIdx(i => i + 1);
+                } else {
+                    setGameState('result');
+                }
+            };
+
+
+            if (gameState === 'menu') return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in">
+                    {showManual && <ManualModal onClose={() => setShowManual(false)} />}
+                    {showPatternsLibrary && (
+                        <PatternsLibraryModal onClose={() => setShowPatternsLibrary(false)} />
+                    )}
+                    <div className="mb-8 w-24 h-24 bg-yellow-500 rounded-3xl rotate-12 flex items-center justify-center shadow-2xl">
+                        <Icon.Book size={48} className="text-slate-900 -rotate-12" />
+                    </div>
+                    <h1 className="text-6xl font-black mb-4 text-white leading-none">Architectural <br /><span className="text-yellow-500">Stories</span></h1>
+                    <p className="text-slate-400 max-w-sm mb-12">Resolva os crimes arquiteturais e se torne um Mestre de Arquitetura de Software</p>
+                    <div className="flex flex-col gap-4 w-full max-w-xs">
+                        <button onClick={() => setGameState('game')} className="bg-blue-600 hover:bg-blue-500 text-white w-full py-5 rounded-2xl font-black text-xl shadow-[0_8px_0_#1e40af] active:shadow-none active:translate-y-2 transition-all">Jogar</button>
+                        <button onClick={() => setShowManual(true)} className="bg-slate-800 hover:bg-slate-700 text-slate-300 w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 border border-slate-700 transition-all">
+                            <Icon.HelpCircle size={20} /> MANUAL
+                        </button>
+                        <button
+                            onClick={() => setShowPatternsLibrary(true)}
+                            className="bg-slate-800 hover:bg-slate-700 text-slate-300 w-full py-4 rounded-2xl font-black flex items-center justify-center gap-2 border border-slate-700 transition-all"
+                        >
+                            <Icon.Book size={20} /> PADRÕES ARQUITETURAIS
+                        </button>
+
+                    </div>
+                </div>
+            );
+
+
+            if (gameState === 'result') return (
+                <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center animate-fade-in">
+                    <div className="bg-slate-800 p-10 rounded-3xl border border-slate-700 shadow-2xl w-full max-w-md">
+                        <h2 className="text-4xl font-bold mb-2">Fim da Missão!</h2>
+                        <p className="text-slate-400 uppercase text-xs tracking-[0.2em] font-bold">Relatório de Desempenho</p>
+                        <div className="text-7xl font-black text-yellow-500 my-8">{score} / {gameCards.length}</div>
+                        <p className="mb-8 text-slate-300">
+                            {score === 20 ? "Arquiteto Lendário! Resolveu todos os crimes." :
+                                score > 15 ? "Excelente Investigador! Quase um especialista." :
+                                    score > 10 ? "Bom trabalho, mas podemos melhorar o conhecimento sobre padrões." : "Precisa estudar mais os padrões!"}
+                        </p>
+                        <button onClick={resetToMenu} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black text-lg transition-all">Menu Inicial</button>
+                    </div>
+                </div>
+            );
+
+
+            return (
+                <div className="max-w-4xl mx-auto p-4 md:p-10 animate-fade-in pb-32">
+                    {showManual && <ManualModal onClose={() => setShowManual(false)} />}
+
+                    <InfoModal pattern={inspecting} onClose={() => setInspecting(null)} />
+                    {confirmExit && <ExitConfirmation onConfirm={resetToMenu} onCancel={() => setConfirmExit(false)} />}
+
+                    <div className="flex justify-between items-center mb-8 bg-slate-800/50 p-4 rounded-2xl backdrop-blur-md sticky top-4 z-40 border border-slate-700">
+                        <button onClick={() => setConfirmExit(true)} className="p-3 bg-slate-700 hover:bg-red-900/40 hover:text-red-400 rounded-xl transition-all">
+                            <Icon.Home size={24} />
+                        </button>
+
+                        <button
+                            onClick={() => setShowManual(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 rounded-xl border border-blue-500/30 transition-all font-bold text-xs uppercase tracking-widest"
+                        >
+                            <Icon.Book size={18} /> Regras
+                        </button>
+
+                        <div className="text-center">
+                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Arquivo</div>
+                            <div className="font-black text-xl">{currentIdx + 1} <span className="text-slate-600 text-sm">/ {gameCards.length}</span></div>
+                        </div>
+
+
+                        <div className="bg-green-500/10 px-4 py-2 rounded-xl border border-green-500/20 text-green-400 font-black text-sm">
+                            SOLUCIONADOS: {score}
+                        </div>
+                    </div>
+
+
+                    <div className="grid md:grid-cols-2 gap-8 items-start">
+                        {/* Enigma */}
+                        <div className="bg-white text-slate-900 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden min-h-[300px] flex flex-col">
+                            <div className="absolute top-0 left-0 w-full h-3 bg-red-600"></div>
+                            <div className="text-[10px] text-slate-400 font-mono mb-2">ID_CASE: ARCH_00{currentCard.id}</div>
+                            <h2 className="text-3xl font-black mb-6 italic text-slate-800 leading-none">{currentCard.title}</h2>
+                            <p className="text-lg leading-relaxed text-slate-700 flex-grow font-medium">{currentCard.problem}</p>
+                            <div className="mt-8 pt-4 border-t border-slate-100 flex justify-between items-center">
+                                <span className="text-[9px] text-slate-300 font-bold uppercase tracking-widest">Confidencial</span>
+                                <div className="w-6 h-6 bg-slate-100 rounded-full"></div>
+                            </div>
+                        </div>
+
+
+                        {/* Opções */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-blue-300 font-black uppercase text-xs tracking-[0.2em] mb-1">Diagnóstico Recomendado</h3>
+                            {options.map(opt => (
+                                <div key={opt.id} className="flex gap-2 group">
+                                    <button
+                                        onClick={() => handleAnswer(opt.id)}
+                                        className={`flex-grow p-5 rounded-2xl font-bold text-left transition-all border-2 shadow-lg
+                                            ${feedback
+                                                ? (opt.id === currentCard.correctId ? 'bg-green-600 border-green-400 text-white translate-x-2' : (selected === opt.id ? 'bg-red-900 border-red-500 opacity-50' : 'bg-slate-800 border-slate-700 opacity-30'))
+                                                : 'bg-slate-800 border-slate-700 hover:border-blue-500 hover:bg-slate-700 hover:-translate-y-1'
+                                            }
+                                        `}
+                                    >
+                                        <div className="text-xl">{opt.name}</div>
+                                    </button>
+                                    <button
+                                        onClick={() => setInspecting(opt)}
+                                        className={`p-5 bg-slate-700 hover:bg-slate-600 rounded-2xl text-slate-300 transition-all shadow-lg
+                                            ${feedback ? 'opacity-30 pointer-events-none' : 'hover:-translate-y-1'}
+                                        `}
+                                    >
+                                        <Icon.Info size={28} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+
+                    {feedback && (
+                        <div className="fixed bottom-0 left-0 w-full p-4 md:p-8 bg-slate-900/95 backdrop-blur-xl border-t border-slate-700 animate-slide-up z-50">
+                            <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
+                                <div className="flex-grow">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${selected === currentCard.correctId ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                                            {selected === currentCard.correctId ? 'Correto' : 'Errado'}
+                                        </span>
+                                        <h4 className="font-black text-white text-lg">Resumo Técnico</h4>
+                                    </div>
+                                    <p className="text-slate-400 text-sm italic leading-relaxed">{currentCard.reason}</p>
+                                </div>
+                                <button onClick={next} className="w-full md:w-auto px-12 py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-xl shadow-xl flex items-center justify-center gap-3 transition-transform active:scale-95">
+                                    PRÓXIMO <Icon.Play />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
