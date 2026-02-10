@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserProfile, GameSession } from '../../types';
+import type { UserProfile, GameSession } from '../../types';
 import './layout.css';
 
 interface HUDProps {

@@ -1,0 +1,147 @@
+.map-container {
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.map-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.map-header h2 {
+    font-size: 2.5rem;
+    background: -webkit-linear-gradient(0deg, var(--text-primary), var(--color-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.map-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* --- Grid da Cidade --- */
+.city-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px;
+    perspective: 1000px; /* Efeito 3D leve */
+}
+
+/* --- Card do Distrito --- */
+.district-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 220px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Hover Efeito (Somente se desbloqueado) */
+.district-card:not(.locked):hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-float);
+    border-color: var(--color-primary);
+}
+
+/* --- Estados do Card --- */
+
+/* 1. Bloqueado */
+.district-card.locked {
+    background: #f1f5f9; /* Slate-100 */
+    cursor: not-allowed;
+    opacity: 0.7;
+    filter: grayscale(1);
+}
+
+.district-card.locked::after {
+    content: "🔒 BLOQUEADO";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 900;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    border: 2px solid var(--text-secondary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    background-color: var(--bg-card);
+}
+
+/* 2. Completado */
+.district-card.completed {
+    border-color: var(--color-success);
+    background: linear-gradient(145deg, #ffffff, #f0fdf4);
+}
+
+.district-card.completed .district-status {
+    color: var(--color-success);
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+}
+
+/* 3. Atual (Desbloqueado) */
+.district-card.active {
+    border: 2px solid var(--color-primary);
+    background: white;
+}
+
+.district-card.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--color-primary);
+}
+
+/* --- Conteúdo do Card --- */
+.district-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+.district-card.active .district-icon {
+    color: var(--color-primary);
+}
+
+.district-info h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.district-info p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.pattern-tag {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.25rem 0.75rem;
+    background: #eff6ff;
+    color: var(--color-tech);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
