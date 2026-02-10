@@ -18,20 +18,28 @@ export const HUD: React.FC<HUDProps> = ({ user, session }) => {
     <header className="hud-container">
       <div className="hud-content">
         
-        {/* Lado Esquerdo: Perfil */}
+        {/* Lado Esquerdo: Perfil e nível*/}
         <div className="hud-profile">
           <div className="hud-avatar">
             {user.name.charAt(0)}
           </div>
           <div className="hud-info">
             <h3>{user.name}</h3>
-            <span>{user.title}</span>
+            <span style={{color: 'var(--color-primary)'}}>
+                Lv.{user.level} {user.title}
+            </span>
           </div>
         </div>
 
         {/* Lado Direito: Stats */}
         <div className="hud-stats">
-          
+          {/* Pontuação da Missão Atual (Temporária) */}
+          <div className="stat-item">
+            <span className="stat-label">Score Missão</span>
+            <div className="score-value">
+              {session.score.toString().padStart(3, '0')}
+            </div>
+          </div>
           {/* Barra de Integridade */}
           <div className="stat-item">
             <span className="stat-label">Integridade do Sistema</span>
@@ -42,15 +50,6 @@ export const HUD: React.FC<HUDProps> = ({ user, session }) => {
               />
             </div>
           </div>
-
-          {/* Pontuação */}
-          <div className="stat-item">
-            <span className="stat-label">Score</span>
-            <div className="score-value">
-              {session.score.toString().padStart(4, '0')}
-            </div>
-          </div>
-
         </div>
       </div>
     </header>

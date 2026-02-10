@@ -5,25 +5,18 @@ import { PhaseMap } from './components/narrative/PhaseMap';
 import { QuizEngine } from './components/game/QuizEngine';
 import { PhaseResult } from './components/game/PhaseResult';
 import phasesData from './data/phases.json';
+import { usePersistence } from './hooks/usePersistence';
 import './styles/global.css';
 
-// Mock de dados para teste visual
-const mockUser = {
-  name: "Dev. Lara",
-  title: "Estagiário Investigador" as const,
-  level: 1,
-  xp: 0,
-  avatarId: "default",
-  unlockedBadges: [],
-  completedPhases: [] 
-}
-
 function App() {
+  const { user, isLoaded, saveProgress, resetSave } = usePersistence();
   const [view, setView] = useState<'map' | 'game' | 'result'>('map');
   const [activePhaseId, setActivePhaseId] = useState<string | null>(null);
   const [sessionIntegrity, setSessionIntegrity] = useState(100);
   const [sessionScore, setSessionScore] = useState(0);
-  const [lastResult, setLastResult] = useState<{passed: boolean} | null>(null);
+  const [lastResult, setLastResult] = useState<{passed: boolean; reason?: 'integrity'|'score'} | null>(null);
+
+  if (!isLoaded) return <div className="app-container flex-center">Carregando perfil...</div>;
 
   const handleSelectPhase = (phaseId: string) => {
     console.log(`Fase selecionada: ${phaseId}`);
@@ -39,11 +32,15 @@ function App() {
     setSessionIntegrity(prev => Math.max(0, prev - 20));
   };
 
+  // 3. Fim da Fase
   const handlePhaseComplete = (score: number, passed: boolean) => {
-    setSessionScore(score);
-    
     const integrityPassed = sessionIntegrity > 0;
     const finalPassed = passed && integrityPassed;
+    setSessionScore(score);
+
+    if (finalPassed && activePhaseId) {
+        saveProgress(activePhaseId, score);
+    }
     
     let failReason: 'integrity' | 'score' | undefined;
     if (!integrityPassed) failReason = 'integrity';
@@ -76,10 +73,10 @@ function App() {
   };
 
   return (
-    <Layout user={mockUser} session={currentSession}>
+    <Layout user={user} session={currentSession}>
       {view === 'map' && (
         <PhaseMap 
-          completedPhases={mockUser.completedPhases} 
+          completedPhases={user.completedPhases} 
           onSelectPhase={handleSelectPhase} 
         />
       )}
