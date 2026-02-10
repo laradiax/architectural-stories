@@ -21,6 +21,52 @@
     border: 1px solid rgba(0,0,0,0.05);
 }
 
+
+/* Grupo de Controles (Direita) */
+.hud-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1.5rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid #e2e8f0; /* Divisória vertical sutil */
+    height: 40px;
+}
+
+/* Botões de Ícone (Genérico) */
+.hud-btn-icon {
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+}
+
+.hud-btn-icon:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+/* Botão Específico: Config (Engrenagem) */
+.btn-settings:hover {
+    color: var(--color-primary); /* Roxo ao passar o mouse */
+    transform: rotate(45deg); /* Efeito de girar */
+}
+
+/* Botão Específico: Logout (Porta) */
+.btn-logout:hover {
+    color: var(--color-danger); /* Vermelho ao passar o mouse */
+    background: #fef2f2; /* Fundo vermelho bem claro */
+}
+
 /* Perfil (Esquerda) */
 .hud-profile {
     display: flex;

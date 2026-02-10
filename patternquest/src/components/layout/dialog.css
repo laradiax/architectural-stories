@@ -1,0 +1,102 @@
+.sys-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6); /* Slate-900 com transparência */
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Acima de tudo */
+  animation: fadeIn 0.2s ease-out;
+}
+
+.sys-modal-card {
+  background: var(--bg-card);
+  width: 90%;
+  max-width: 400px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  animation: scaleUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid #e2e8f0;
+}
+
+/* Header */
+.sys-modal-header {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sys-icon {
+  font-size: 1.5rem;
+}
+
+.sys-modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* Variações de cor no Header/Borda */
+.sys-modal-card.danger { border-top: 4px solid var(--color-danger); }
+.sys-modal-card.info { border-top: 4px solid var(--color-tech); }
+.sys-modal-card.success { border-top: 4px solid var(--color-success); }
+
+/* Body */
+.sys-modal-body {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Footer */
+.sys-modal-footer {
+  padding: 1rem 1.5rem;
+  background: var(--bg-app);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Botões */
+.sys-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.sys-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid #cbd5e1;
+}
+.sys-btn-ghost:hover {
+  background: white;
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.sys-btn-danger {
+  background: var(--color-danger);
+  color: white;
+}
+.sys-btn-danger:hover { background: #dc2626; }
+
+.sys-btn-info {
+  background: var(--color-tech);
+  color: white;
+}
+.sys-btn-info:hover { background: #2563eb; }
+
+/* Animações */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }

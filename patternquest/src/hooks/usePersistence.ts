@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import type { UserProfile } from '../types';
+import type { UserProfile, UserPreferences } from '../types';
 import { calculateLevel, getTitleForLevel } from '../utils/gamification';
 
 const STORAGE_KEY = 'PATTERN_QUEST_SAVE_V1';
+
+const INITIAL_PREFERENCES = { theme: 'light', language: 'pt', soundEnabled: true };
 
 const INITIAL_PROFILE_TEMPLATE: Omit<UserProfile, 'name'| 'password'> = {
     title: "Estagiário Investigador",
@@ -10,7 +12,8 @@ const INITIAL_PROFILE_TEMPLATE: Omit<UserProfile, 'name'| 'password'> = {
     xp: 0,
     avatarId: "default",
     unlockedBadges: [],
-    completedPhases: []
+    completedPhases: [],
+    preferences: INITIAL_PREFERENCES
 };
 
 type SaveDatabase = Record<string, UserProfile>;
@@ -19,6 +22,23 @@ export const usePersistence = () => {
     const [allUsers, setAllUsers] = useState<SaveDatabase>({});
     const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
+
+    //Atualizar preferências
+    const updatePreferences = (newPrefs: Partial<UserPreferences>) => {
+        if (!currentUser) return;
+        
+        // Atualiza o estado local e persiste
+        const updatedUser = {
+            ...currentUser,
+            preferences: { ...currentUser.preferences, ...newPrefs }
+        };
+        
+        setCurrentUser(updatedUser);
+        
+        const newDb = { ...allUsers, [currentUser.name]: updatedUser };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newDb));
+        setAllUsers(newDb);
+    };
 
     // 1. Carregar ao iniciar
     useEffect(() => {
@@ -130,5 +150,6 @@ export const usePersistence = () => {
         login, 
         logout,
         saveProgress, 
-        resetSave };
+        resetSave,
+        updatePreferences };
 };

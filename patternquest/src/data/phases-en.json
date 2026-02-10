@@ -1,0 +1,219 @@
+[
+  {
+    "id": "p1_garage",
+    "title": "Garage District",
+    "subtitle": "Code Without Borders",
+    "theme": "garage",
+    "requiredScore": 50,
+    "narrativeIntro": "Welcome to TechCity, Investigator. Your journey begins in a garage startup. The team grew fast and ignored patterns. The code is mixed, the UI accesses the database, and visual bugs corrupt data. Your mission is to clean up the house.",
+    "dominantPattern": "Layers",
+    "questions": [
+      {
+        "id": "q1_mixed",
+        "title": "The Mixed Code",
+        "problem": "A programmer changed a button's color and accidentally broke the password validation because UI and Business Logic were in the same file.",
+        "correctId": "camadas",
+        "wrongOptions": ["client_server", "microkernel", "pipe_filter"],
+        "reason": "Layered Architecture separates Presentation, Business, and Data, preventing visual changes from affecting critical rules.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "q2_untestable",
+        "title": "The Untestable Logic",
+        "problem": "The QA team cannot test the interest calculation without spinning up the database and the full web interface.",
+        "correctId": "camadas",
+        "wrongOptions": ["mvc", "broker", "p2p"],
+        "reason": "Isolating business logic in its own layer allows for fast unit tests without external dependencies.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "q3_spreadsheet",
+        "title": "The Spreadsheet of Chaos",
+        "problem": "Two salespeople try to save data to the same shared Excel spreadsheet on the network, overwriting each other's work.",
+        "correctId": "client_server",
+        "wrongOptions": ["pipe_filter", "soa", "facade"],
+        "reason": "The Client-Server model centralizes data and manages concurrency for multiple accesses.",
+        "difficulty": "easy"
+      }
+    ]
+  },
+  {
+    "id": "p2_commercial",
+    "title": "Commercial Center",
+    "subtitle": "The Single-Screen Monster",
+    "theme": "corporate",
+    "requiredScore": 100,
+    "narrativeIntro": "Promotion granted. Now you deal with legacy corporate systems. The problem here is massive interfaces coupled directly to data, making maintenance a nightmare.",
+    "dominantPattern": "MVC",
+    "questions": [
+      {
+        "id": "q4_giant_file",
+        "title": "The 5,000-Line File",
+        "problem": "A single web page contains HTML, SSN validation, and SQL commands. Any change is risky.",
+        "correctId": "mvc",
+        "wrongOptions": ["camadas", "microkernel", "proxy"],
+        "reason": "MVC separates Model (data), View (interface), and Controller (flow), organizing the interface chaos.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q5_video_proc",
+        "title": "Inflexible Processor",
+        "problem": "A giant function does: resize, watermark, and video compression. The client now wants only the watermark, but it's impossible to separate.",
+        "correctId": "pipe_filter",
+        "wrongOptions": ["mvc", "eda", "saga"],
+        "reason": "Pipe and Filter divides processing into independent steps that can be recombined.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q17_ghost_image",
+        "title": "The Ghost Image",
+        "problem": "A page loads 100 high-resolution photos at once, freezing the user's browser.",
+        "correctId": "proxy",
+        "wrongOptions": ["adapter", "facade", "singleton"],
+        "reason": "The Virtual Proxy allows Lazy Loading, loading heavy images only when necessary.",
+        "difficulty": "medium"
+      }
+    ]
+  },
+  {
+    "id": "p3_industrial",
+    "title": "Industrial District",
+    "subtitle": "The Integration Hell",
+    "theme": "legacy",
+    "requiredScore": 150,
+    "narrativeIntro": "Welcome to the industrial park. Here, systems from different decades try to talk. It's a spiderweb of point-to-point integrations that fail in cascade.",
+    "dominantPattern": "Integration",
+    "questions": [
+      {
+        "id": "q7_point_to_point",
+        "title": "The Spiderweb",
+        "problem": "HR calls Finance, which calls Sales. If one goes down, they all go down. Adding a new system requires touching all the others.",
+        "correctId": "soa",
+        "wrongOptions": ["mvc", "microkernel", "p2p"],
+        "reason": "SOA (or an ESB) centralizes and standardizes integration, avoiding point-to-point coupling.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q15_xml_json",
+        "title": "The Universal Translator",
+        "problem": "The modern system speaks JSON. The legacy one speaks XML. They don't understand each other and integration fails.",
+        "correctId": "adapter",
+        "wrongOptions": ["facade", "proxy", "bridge"],
+        "reason": "The Adapter translates the interface of one component into the format expected by the other.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q16_facade",
+        "title": "Too Many Calls",
+        "problem": "The Mobile App needs to make 8 different calls to build the home screen, becoming slow and draining battery.",
+        "correctId": "facade",
+        "wrongOptions": ["adapter", "singleton", "observer"],
+        "reason": "The Facade creates a simplified, single interface that groups complex backend calls.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q11_queue",
+        "title": "The Task Queue",
+        "problem": "The user uploads a photo and gets stuck on the loading screen for 30 seconds waiting for processing.",
+        "correctId": "broker",
+        "wrongOptions": ["mvc", "client_server", "p2p"],
+        "reason": "The Broker (Message Queue) decouples submission from processing, freeing the user immediately.",
+        "difficulty": "medium"
+      }
+    ]
+  },
+  {
+    "id": "p4_digital",
+    "title": "Digital District",
+    "subtitle": "Scale or Die",
+    "theme": "cloud",
+    "requiredScore": 150,
+    "narrativeIntro": "The TechCity App went viral. We have millions of simultaneous hits. The central server is melting. We need elastic scalability and total decoupling.",
+    "dominantPattern": "Distributed",
+    "questions": [
+      {
+        "id": "q9_success_crash",
+        "title": "Victim of Success",
+        "problem": "The e-commerce site crashed on Black Friday. The Registration module froze and took Payment down with it, because it was all one block.",
+        "correctId": "microsservicos",
+        "wrongOptions": ["soa", "client_server", "monolith"],
+        "reason": "Microservices allow scaling and isolating parts of the system (e.g., scaling only Payment) independently.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q6_async_buy",
+        "title": "The Frozen Purchase",
+        "problem": "The user clicks 'Buy' and waits 10 seconds because the Email system is slow. The process is too synchronous.",
+        "correctId": "eda",
+        "wrongOptions": ["mvc", "pipe_filter", "proxy"],
+        "reason": "Event-Driven Architecture (EDA) allows asynchronous processing: 'Order Created' -> frees user -> sends email later.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q8_feed",
+        "title": "News Feed",
+        "problem": "The news publisher needs to know the exact list of all subscribers (Sports, Politics). Adding a new category breaks the publisher.",
+        "correctId": "pub_sub",
+        "wrongOptions": ["observer", "mediator", "chain"],
+        "reason": "Publish-Subscribe decouples senders from receivers via topics.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q12_p2p",
+        "title": "Expensive Server",
+        "problem": "Distributing a 50GB file to 1 million users will bankrupt the company in server bandwidth costs.",
+        "correctId": "p2p",
+        "wrongOptions": ["client_server", "broker", "master_slave"],
+        "reason": "Peer-to-Peer uses the users' own bandwidth to distribute content, relieving the central server.",
+        "difficulty": "hard"
+      }
+    ]
+  },
+  {
+    "id": "p5_tower",
+    "title": "Central Tower",
+    "subtitle": "The Coordination Chaos",
+    "theme": "governance",
+    "requiredScore": 200,
+    "narrativeIntro": "You've reached the top. The Control Tower manages critical aviation and banking systems. Here, a coordination error costs lives or billions. Protect the core at all costs.",
+    "dominantPattern": "Orchestration",
+    "questions": [
+      {
+        "id": "q18_air_control",
+        "title": "Control Tower",
+        "problem": "Several planes want to land. If they talk to each other to decide who goes first, there will be a collision.",
+        "correctId": "mediator",
+        "wrongOptions": ["observer", "facade", "proxy"],
+        "reason": "The Mediator centralizes complex many-to-many communication, coordinating the flow.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q14_saga",
+        "title": "Never-ending Transaction",
+        "problem": "In microservices, we need to debit balance, reserve stock, and issue an invoice. If the invoice fails, how do we undo previous steps without locking the database?",
+        "correctId": "saga",
+        "wrongOptions": ["two_phase_commit", "singleton", "memento"],
+        "reason": "Saga Pattern manages distributed transactions via a sequence of events and compensating actions (undo).",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q13_hexagonal",
+        "title": "The Isolated Heart",
+        "problem": "We want to test pure business rules, but the code is full of 'import HTTP' and 'import SQL'.",
+        "correctId": "hexagonal",
+        "wrongOptions": ["mvc", "layers", "microkernel"],
+        "reason": "Hexagonal Architecture (Ports & Adapters) shields the domain (core), allowing it to work without knowing if it's coming from the Web or a Test.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q20_ai_recog",
+        "title": "Impossible Recognition",
+        "problem": "An AI system needs to recognize handwritten text, but no single algorithm is good enough. They need to collaborate.",
+        "correctId": "blackboard",
+        "wrongOptions": ["strategy", "chain", "visitor"],
+        "reason": "The Blackboard allows multiple specialist agents to contribute partially to solving a complex, non-deterministic problem.",
+        "difficulty": "hard"
+      }
+    ]
+  }
+]

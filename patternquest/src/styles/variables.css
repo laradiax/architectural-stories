@@ -27,3 +27,18 @@
   --font-main: 'Montserrat', system-ui, sans-serif;
   --font-mono: 'Fira Sans', monospace; /* Para código */
 }
+
+body.dark-mode {
+  --bg-app: #0f172a;        /* Slate-900 */
+  --bg-card: #1e293b;       /* Slate-800 */
+  --text-primary: #f8fafc;  /* Branco */
+  --text-secondary: #94a3b8;/* Cinza Claro */
+
+  --color-primary: #6366f1;       /* Indigo-500 (Mais brilhante) */
+  --color-primary-hover: #818cf8;
+  
+  --color-narrative: #fb923c;     /* Orange-400 */
+  --color-tech: #60a5fa;          /* Blue-400 */
+  
+  --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5); /* Sombra mais forte */
+}

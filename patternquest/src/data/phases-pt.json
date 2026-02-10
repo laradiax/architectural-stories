@@ -5,7 +5,7 @@
     "subtitle": "O Código Sem Fronteiras",
     "theme": "garage",
     "requiredScore": 50,
-    "narrativeIntro": "Bem-vindo à TechCity, Investigador. Sua jornada começa numa startup de garagem. O time cresceu rápido e ignorou padrões. O código está misturado, a UI acessa o banco e bugs visuais corrompem dados. Sua missão é organizar a casa.",
+    "narrativeIntro": "Bem-vindo à ArchPatterns City, Investigador. Sua jornada começa numa startup de garagem. O time cresceu rápido e ignorou padrões. O código está misturado, a UI acessa o banco e bugs visuais corrompem dados. Sua missão é organizar a casa.",
     "dominantPattern": "Layers",
     "questions": [
       {
@@ -128,7 +128,7 @@
     "subtitle": "Escala ou Morte",
     "theme": "cloud",
     "requiredScore": 150,
-    "narrativeIntro": "O App da TechCity viralizou. Temos milhões de acessos simultâneos. O servidor central está derretendo. Precisamos de escalabilidade elástica e desacoplamento total.",
+    "narrativeIntro": "O App da ArchPatterns City viralizou. Temos milhões de acessos simultâneos. O servidor central está derretendo. Precisamos de escalabilidade elástica e desacoplamento total.",
     "dominantPattern": "Distributed",
     "questions": [
       {

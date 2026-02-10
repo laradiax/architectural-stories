@@ -1,21 +1,21 @@
 import React from 'react';
-import phasesData from '../../data/phases.json';
 import type { Phase } from '../../types';
 import './map.css';
 
 
 interface PhaseMapProps {
+    phases: Phase[];
     completedPhases: string[]; // IDs das fases completadas
     onSelectPhase: (phaseId: string) => void;
 }
 
-export const PhaseMap: React.FC<PhaseMapProps> = ({ completedPhases, onSelectPhase }) => {
+export const PhaseMap: React.FC<PhaseMapProps> = ({ phases, completedPhases, onSelectPhase }) => {
     
     // Helper para determinar estado
     const getPhaseStatus = (phaseIndex: number, phaseId: string) => {
         const isCompleted = completedPhases.includes(phaseId);
         // Desbloqueado se: é a primeira fase OU a fase anterior foi completada
-        const isUnlocked = phaseIndex === 0 || completedPhases.includes(phasesData[phaseIndex - 1].id);
+        const isUnlocked = phaseIndex === 0 || completedPhases.includes(phaseId[phaseIndex - 1]);
         
         if (isCompleted) return 'completed';
         if (isUnlocked) return 'active';
@@ -25,12 +25,12 @@ export const PhaseMap: React.FC<PhaseMapProps> = ({ completedPhases, onSelectPha
     return (
         <div className="map-container animate-enter">
             <header className="map-header">
-                <h2>Mapa da TechCity</h2>
+                <h2>Mapa da Cidade ArchPatterns</h2>
                 <p>Selecione um distrito para iniciar a investigação</p>
             </header>
 
             <div className="city-grid">
-                {phasesData.map((phase: any, index: number) => {
+                {phases.map((phase: any, index: number) => {
                     const status = getPhaseStatus(index, phase.id);
                     const isLocked = status === 'locked';
 

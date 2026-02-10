@@ -1,0 +1,147 @@
+[
+  {
+    "id": "camadas",
+    "name": "Layered Architecture",
+    "type": "Structural",
+    "desc": "Organizes the system into horizontal groups (e.g., UI, Business, Data).",
+    "pros": "Separation of concerns and testability.",
+    "cons": "Can add latency if there are too many layers."
+  },
+  {
+    "id": "mvc",
+    "name": "Model-View-Controller",
+    "type": "Interface",
+    "desc": "Separates the application into Data (Model), Interface (View), and Control (Controller).",
+    "pros": "Facilitates maintenance of complex interfaces.",
+    "cons": "Controller can become bloated ('Massive View Controller')."
+  },
+  {
+    "id": "client_server",
+    "name": "Client-Server",
+    "type": "Distributed",
+    "desc": "Separates who consumes (Client) from who provides (Server) resources.",
+    "pros": "Data centralization and security.",
+    "cons": "Server is a single point of failure and bottleneck."
+  },
+  {
+    "id": "pipe_filter",
+    "name": "Pipe and Filter",
+    "type": "Data Flow",
+    "desc": "Processing in sequential steps where the output of one is the input of the next.",
+    "pros": "Filter reuse and flexibility.",
+    "cons": "Difficult to manage global state or errors mid-flow."
+  },
+  {
+    "id": "soa",
+    "name": "Service-Oriented Arch",
+    "type": "Integration",
+    "desc": "Complete systems expose reusable services via standardized contract.",
+    "pros": "Interoperability between different technologies.",
+    "cons": "Governance complexity and ESB."
+  },
+  {
+    "id": "microsservicos",
+    "name": "Microservices",
+    "type": "Distributed",
+    "desc": "Small autonomous services that do one thing well.",
+    "pros": "Independent scalability and rapid deployment.",
+    "cons": "Operational complexity and data consistency."
+  },
+  {
+    "id": "eda",
+    "name": "Event-Driven Arch",
+    "type": "Messaging",
+    "desc": "Components react to events (facts that occurred) asynchronously.",
+    "pros": "Temporal decoupling and scalability.",
+    "cons": "Difficult to trace flow (debug) and eventual consistency."
+  },
+  {
+    "id": "hexagonal",
+    "name": "Hexagonal Architecture",
+    "type": "Structural",
+    "desc": "Isolates the application core (domain) from external technologies via Ports and Adapters.",
+    "pros": "Total testability of the core without database/UI.",
+    "cons": "Many interfaces and extra classes (boilerplate)."
+  },
+  {
+    "id": "p2p",
+    "name": "Peer-to-Peer (P2P)",
+    "type": "Distributed",
+    "desc": "Decentralized network where each node is client and server.",
+    "pros": "High resilience and bandwidth scalability.",
+    "cons": "Security and data consistency."
+  },
+  {
+    "id": "saga",
+    "name": "Saga Pattern",
+    "type": "Distributed",
+    "desc": "Manages long transactions in distributed services via compensation.",
+    "pros": "Maintains consistency without locking the database.",
+    "cons": "Implementation complexity (manual rollback)."
+  },
+  {
+    "id": "mediator",
+    "name": "Mediator",
+    "type": "Behavioral",
+    "desc": "Centralizes complex communication between objects.",
+    "pros": "Reduces chaotic dependencies (N-to-N).",
+    "cons": "Mediator can become a 'God Object'."
+  },
+  {
+    "id": "facade",
+    "name": "Facade",
+    "type": "Structural",
+    "desc": "Provides a simplified interface to a complex subsystem.",
+    "pros": "Ease of use and decoupling.",
+    "cons": "May hide useful features."
+  },
+  {
+    "id": "adapter",
+    "name": "Adapter",
+    "type": "Structural",
+    "desc": "Allows classes with incompatible interfaces to work together.",
+    "pros": "Legacy integration.",
+    "cons": "Extra processing layer."
+  },
+  {
+    "id": "microkernel",
+    "name": "Microkernel (Plugin)",
+    "type": "Structural",
+    "desc": "Minimal core with extended functionality via plugins.",
+    "pros": "Extensibility and feature isolation.",
+    "cons": "Complexity in core API design."
+  },
+  {
+    "id": "broker",
+    "name": "Broker",
+    "type": "Messaging",
+    "desc": "Intermediary that manages communication (e.g., queues).",
+    "pros": "Decoupling of producers and consumers.",
+    "cons": "Single point of failure if not clustered."
+  },
+  {
+    "id": "pub_sub",
+    "name": "Publish-Subscribe",
+    "type": "Messaging",
+    "desc": "Publishers send messages to topics without knowing who the subscribers are.",
+    "pros": "Extreme decoupling and scalability.",
+    "cons": "No guarantee of immediate delivery."
+  },
+  {
+    "id": "blackboard",
+    "name": "Blackboard",
+    "type": "AI/Data",
+    "desc": "Independent specialists collaborate by writing to a shared space.",
+    "pros": "Solves complex and non-deterministic problems.",
+    "cons": "Difficulty in debugging and control."
+  },
+  
+  { "id": "monolith", "name": "Monolith", "type": "Anti-Pattern" },
+  { "id": "proxy", "name": "Proxy", "type": "Structural" },
+  { "id": "singleton", "name": "Singleton", "type": "Creation" },
+  { "id": "observer", "name": "Observer", "type": "Behavioral" },
+  { "id": "memento", "name": "Memento", "type": "Behavioral" },
+  { "id": "bridge", "name": "Bridge", "type": "Structural" },
+  { "id": "master_slave", "name": "Master-Slave", "type": "Distributed" },
+  { "id": "two_phase_commit", "name": "2-Phase Commit", "type": "Transactional" }
+]

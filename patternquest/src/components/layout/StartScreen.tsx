@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import patternsData from '../../data/patterns.json';
 import type { UserProfile } from '../../types';
 import './start.css';
 
@@ -157,7 +156,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onLogin, existingUsers
                         <div className="manual-header">
                             <div className="manual-title">
                                 <h2>{selectedUserForLogin ? 'Autenticação' : 'Acesso'}</h2>
-                                <span>{selectedUserForLogin ? `Bem-vindo de volta, ${selectedUserForLogin}` : 'Selecione ou Crie'}</span>
+                                <span>{selectedUserForLogin ? `Bem-vindo de volta, ${selectedUserForLogin}` : 'Selecione ou Crie seu perfil'}</span>
                             </div>
                             <button className="modal-close-btn" onClick={closeModal}>✕</button>
                         </div>
@@ -265,7 +264,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onLogin, existingUsers
                         </div>
                         <div className="manual-scroll-area">
                             <div className="flow-grid" style={{gridTemplateColumns: '1fr'}}>
-                                {patternsData.map(p => (
+                                {t.map(p => (
                                     <div key={p.id} className="flow-step-card" style={{borderLeft: '4px solid var(--color-tech)'}}>
                                         <h4 style={{color: 'var(--color-tech)', fontSize: '1.2rem', fontWeight: 'bold'}}>{p.name}</h4>
                                         <p>{p.desc}</p>

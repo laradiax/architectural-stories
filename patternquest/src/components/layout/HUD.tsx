@@ -5,9 +5,14 @@ import './layout.css';
 interface HUDProps {
   user: UserProfile;
   session: GameSession;
+  onLogout: () => void;
+  onSettings: () => void;
+  onBackToMap: () => void;
+  showBackButton: boolean;
 }
 
-export const HUD: React.FC<HUDProps> = ({ user, session }) => {
+export const HUD: React.FC<HUDProps> = ({ user, session, onLogout, onSettings, onBackToMap, 
+    showBackButton }) => {
   // Define cor da barra baseada na integridade
   const getIntegrityColorClass = () => {
     if (session.integrity <= 30) return 'critical';
@@ -33,25 +38,54 @@ export const HUD: React.FC<HUDProps> = ({ user, session }) => {
 
         {/* Lado Direito: Stats */}
         <div className="hud-stats">
-          {/* Pontuação da Missão Atual (Temporária) */}
-          <div className="stat-item">
-            <span className="stat-label">Score Missão</span>
-            <div className="score-value">
-              {session.score.toString().padStart(3, '0')}
+                <div className="stat-item">
+                    <span className="stat-label">Score Missão</span>
+                    <div className="score-value">
+                    {session.score.toString().padStart(3, '0')}
+                    </div>
+                </div>
+
+                <div className="stat-item">
+                    <span className="stat-label">Integridade</span>
+                    <div className="integrity-bar-container">
+                    <div 
+                        className={`integrity-fill ${getIntegrityColorClass()}`} 
+                        style={{ width: `${session.integrity}%` }}
+                    />
+                    </div>
+                </div>
             </div>
-          </div>
-          {/* Barra de Integridade */}
-          <div className="stat-item">
-            <span className="stat-label">Integridade do Sistema</span>
-            <div className="integrity-bar-container">
-              <div 
-                className={`integrity-fill ${getIntegrityColorClass()}`} 
-                style={{ width: `${session.integrity}%` }}
-              />
+
+            <div className="hud-controls">
+                
+                {/* BOTÃO VOLTAR AO MAPA (Novo) */}
+                {showBackButton && (
+                    <button 
+                        className="hud-btn-icon" 
+                        onClick={onBackToMap}
+                        title="Abortar / Voltar ao Mapa"
+                        style={{color: 'var(--color-narrative)'}} // Laranja para destacar navegação
+                    >
+                        🗺️
+                    </button>
+                )}
+
+                <button 
+                    className="hud-btn-icon btn-settings" 
+                    onClick={onSettings}
+                    title="Configurações"
+                >
+                    ⚙️
+                </button>
+                <button 
+                    className="hud-btn-icon btn-logout" 
+                    onClick={onLogout}
+                    title="Encerrar Sessão"
+                >
+                    🚪
+                </button>
             </div>
-          </div>
         </div>
-      </div>
     </header>
   );
 };

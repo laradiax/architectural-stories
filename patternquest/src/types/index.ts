@@ -1,3 +1,9 @@
+export interface UserPreferences {
+    theme: 'light' | 'dark';
+    language: 'pt' | 'en';
+    soundEnabled: boolean;
+}
+
 export type PlayerTitle = 
   | 'Estagiário Investigador' 
   | 'Desenvolvedor Júnior' 
@@ -14,6 +20,7 @@ export interface UserProfile {
   xp: number;            
   unlockedBadges: string[];
   completedPhases: string[];
+  preferences: UserPreferences;
 }
 
 export interface GameSession {

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import type { Phase } from '../../types';
-import patternsData from '../../data/patterns.json';
+import type { Phase, Pattern } from '../../types/game';
 import './game.css';
 
 interface QuizEngineProps {
   phase: Phase;
+  patterns: Pattern[];
   onCompletePhase: (score: number, passed: boolean) => void;
   onIntegrityLoss: () => void; // Callback para reduzir vida no App principal
 }
 
 export const QuizEngine: React.FC<QuizEngineProps> = ({ 
-  phase, 
+  phase,
+  patterns,
   onCompletePhase,
   onIntegrityLoss 
 }) => {
@@ -24,7 +25,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
   const currentQuestion = phase.questions[currentQIndex];
 
   const getPatternName = (id: string) => {
-    const pattern = patternsData.find(p => p.id === id);
+    const pattern = patterns.find(p => p.id === id);
     return pattern ? pattern.name : id.toUpperCase(); // Fallback se não achar
   };
 
