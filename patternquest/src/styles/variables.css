@@ -1,0 +1,29 @@
+:root {
+  /* --- Paleta Base --- */
+  --bg-app: #f8fafc;        /* Branco acizentado */
+  --bg-card: #ffffff;       /* Branco */
+  --text-primary: #0f172a;  /* Preto Suave */
+  --text-secondary: #64748b;/* Cinza */
+
+  /* --- Cores Semânticas (Brand) --- */
+  --color-primary: #5e17eb;       /* Roxo - Ação Principal */
+  --color-primary-hover: #5e17eba0;
+  
+  --color-narrative: #f96340;     /* Laranja - Narrativa/Missão */
+  --color-tech: #0081f6;          /* Azul - Técnico/Info */
+  --color-special: #d40f77;       /* Rosa - Conquistas/Feedback */
+
+  /* --- Estados do Sistema --- */
+  --color-success: #10b981;       /* Verde - Acerto/Integridade Alta */
+  --color-danger: #ef4444;        /* Vermelho - Erro/Colapso */
+  --color-warning: #f59e0b;       /* Amarelo - Alerta */
+
+  /* --- Layout & Espaçamento --- */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --font-main: 'Montserrat', system-ui, sans-serif;
+  --font-mono: 'Fira Sans', monospace; /* Para código */
+}

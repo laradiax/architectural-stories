@@ -1,0 +1,183 @@
+[
+  {
+    "id": "p1_garage",
+    "title": "Distrito da Garagem",
+    "subtitle": "O Código Sem Fronteiras",
+    "theme": "garage",
+    "requiredScore": 300,
+    "narrativeIntro": "Bem-vindo à TechCity. Sua primeira missão é numa startup caótica. O código cresceu sem estrutura e tudo está misturado.",
+    "dominantPattern": "Layers",
+    "questions": [
+      {
+        "id": "q1_mixed",
+        "title": "O Código Misturado",
+        "problem": "Um programador alterou a cor de um botão e acidentalmente quebrou a validação de senha, pois a lógica de UI e de Negócio estavam no mesmo arquivo.",
+        "correctId": "camadas",
+        "wrongOptions": ["client_server", "microkernel", "pipe_filter"],
+        "reason": "A Arquitetura em Camadas separa Apresentação, Negócio e Dados, evitando que alterações visuais afetem regras críticas.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "q2_untestable",
+        "title": "A Lógica Intestável",
+        "problem": "A equipe de QA não consegue testar o cálculo de juros sem subir o banco de dados e a interface web completa.",
+        "correctId": "camadas",
+        "wrongOptions": ["mvc", "broker", "p2p"],
+        "reason": "Isolar a lógica de negócio em uma camada própria permite testes unitários rápidos sem dependências externas.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "q3_spreadsheet",
+        "title": "A Planilha do Caos",
+        "problem": "Dois vendedores tentam salvar dados na mesma planilha Excel compartilhada na rede, sobrescrevendo o trabalho um do outro.",
+        "correctId": "client_server",
+        "wrongOptions": ["pipe_filter", "soa", "facade"],
+        "reason": "O modelo Cliente-Servidor centraliza os dados e gerencia a concorrência de múltiplos acessos.",
+        "difficulty": "easy"
+      }
+    ]
+  },
+  {
+    "id": "p2_commercial",
+    "title": "Centro Comercial",
+    "subtitle": "O Monstro de Uma Tela Só",
+    "theme": "corporate",
+    "requiredScore": 400,
+    "narrativeIntro": "Você foi promovido. Agora lidamos com sistemas corporativos. O problema aqui é interface acoplada demais aos dados.",
+    "dominantPattern": "MVC",
+    "questions": [
+      {
+        "id": "q4_giant_file",
+        "title": "O Arquivo de 5.000 Linhas",
+        "problem": "Uma única página web contém HTML, Validação de CPF e Comandos SQL. Dar manutenção é um pesadelo.",
+        "correctId": "mvc",
+        "wrongOptions": ["camadas", "microkernel", "proxy"],
+        "reason": "O MVC separa Model (dados), View (interface) e Controller (fluxo), organizando o caos da interface.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q5_video_proc",
+        "title": "Processador Inflexível",
+        "problem": "Uma função gigante faz: resize, marca d'água e compressão de vídeo. O cliente quer agora só marca d'água, mas é impossível separar.",
+        "correctId": "pipe_filter",
+        "wrongOptions": ["mvc", "eda", "saga"],
+        "reason": "Pipe and Filter divide o processamento em etapas independentes que podem ser recombinadas.",
+        "difficulty": "medium"
+      }
+    ]
+  },
+  {
+    "id": "p3_industrial",
+    "title": "Distrito Industrial",
+    "subtitle": "A Integração Infernal",
+    "theme": "legacy",
+    "requiredScore": 400,
+    "narrativeIntro": "Fábricas antigas e sistemas legados. Tudo está conectado ponto-a-ponto, criando um espaguete de integrações.",
+    "dominantPattern": "Integration",
+    "questions": [
+      {
+        "id": "q7_point_to_point",
+        "title": "A Teia de Aranha",
+        "problem": "O RH chama o Financeiro, que chama Vendas. Se um cai, todos caem. Adicionar um novo sistema exige mexer em todos os outros.",
+        "correctId": "soa",
+        "wrongOptions": ["mvc", "microkernel", "p2p"],
+        "reason": "SOA (ou um Barramento) centraliza e padroniza a integração, evitando o acoplamento ponto-a-ponto.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q15_xml_json",
+        "title": "O Tradutor Universal",
+        "problem": "O sistema moderno fala JSON. O legado fala XML. Eles não se entendem.",
+        "correctId": "adapter",
+        "wrongOptions": ["facade", "proxy", "bridge"],
+        "reason": "O Adapter traduz a interface de um componente para o formato esperado pelo outro.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q16_facade",
+        "title": "Muitas Chamadas",
+        "problem": "O App Mobile precisa fazer 8 chamadas diferentes para montar a tela inicial, ficando lento e gastando bateria.",
+        "correctId": "facade",
+        "wrongOptions": ["adapter", "singleton", "observer"],
+        "reason": "A Facade cria uma interface simplificada e única que agrupa as chamadas complexas do backend.",
+        "difficulty": "medium"
+      }
+    ]
+  },
+  {
+    "id": "p4_digital",
+    "title": "Distrito Digital",
+    "subtitle": "Escala ou Morte",
+    "theme": "cloud",
+    "requiredScore": 500,
+    "narrativeIntro": "O App viralizou. Milhões de acessos. O servidor central está derretendo. Precisamos de escalabilidade.",
+    "dominantPattern": "Distributed",
+    "questions": [
+      {
+        "id": "q9_success_crash",
+        "title": "Vítima do Sucesso",
+        "problem": "O e-commerce caiu na Black Friday. O módulo de Cadastro travou e derrubou o Pagamento junto, pois era tudo um bloco só.",
+        "correctId": "microsservicos",
+        "wrongOptions": ["soa", "client_server", "monolith"],
+        "reason": "Microsserviços permitem escalar e isolar partes do sistema (ex: escalar só o Pagamento) independentemente.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q6_async_buy",
+        "title": "A Compra Travada",
+        "problem": "O usuário clica em 'Comprar' e espera 10 segundos porque o sistema de Email está lento. O processo é síncrono demais.",
+        "correctId": "eda",
+        "wrongOptions": ["mvc", "pipe_filter", "proxy"],
+        "reason": "Arquitetura Orientada a Eventos (EDA) permite processamento assíncrono: 'Pedido Criado' -> libera o usuário -> envia email depois.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q12_p2p",
+        "title": "Servidor Caro",
+        "problem": "Distribuir um arquivo de 50GB para 1 milhão de usuários vai falir a empresa em custos de banda de servidor.",
+        "correctId": "p2p",
+        "wrongOptions": ["client_server", "broker", "master_slave"],
+        "reason": "Peer-to-Peer usa a banda dos próprios usuários para distribuir o conteúdo, aliviando o servidor central.",
+        "difficulty": "hard"
+      }
+    ]
+  },
+  {
+    "id": "p5_tower",
+    "title": "Torre Central",
+    "subtitle": "O Caos da Coordenação",
+    "theme": "governance",
+    "requiredScore": 500,
+    "narrativeIntro": "O nível final. Sistemas complexos de aviação e bancários. O erro aqui custa vidas ou bilhões.",
+    "dominantPattern": "Orchestration",
+    "questions": [
+      {
+        "id": "q18_air_control",
+        "title": "Torre de Controle",
+        "problem": "Vários aviões querem pousar. Se eles conversarem entre si para decidir quem vai primeiro, haverá colisão.",
+        "correctId": "mediator",
+        "wrongOptions": ["observer", "facade", "proxy"],
+        "reason": "O Mediator centraliza a comunicação complexa muitos-para-muitos, coordenando o fluxo.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q14_saga",
+        "title": "Transação Interminável",
+        "problem": "Em microserviços, precisamos debitar saldo, reservar estoque e emitir nota. Se a nota falhar, como desfazer os passos anteriores sem travar o banco?",
+        "correctId": "saga",
+        "wrongOptions": ["two_phase_commit", "singleton", "memento"],
+        "reason": "Saga Pattern gerencia transações distribuídas através de uma sequência de eventos e ações de compensação (undo).",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q13_hexagonal",
+        "title": "O Coração Isolado",
+        "problem": "Queremos testar a regra de negócio pura, mas o código está cheio de 'import HTTP' e 'import SQL'.",
+        "correctId": "hexagonal",
+        "wrongOptions": ["mvc", "layers", "microkernel"],
+        "reason": "Arquitetura Hexagonal (Ports & Adapters) blinda o domínio (núcleo), permitindo que ele funcione sem saber se vem da Web ou do Teste.",
+        "difficulty": "hard"
+      }
+    ]
+  }
+]
