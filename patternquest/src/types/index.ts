@@ -7,6 +7,7 @@ export type PlayerTitle =
 
 export interface UserProfile {
   name: string;
+  password: string;
   title: PlayerTitle;
   level: number;
   avatarId: string;

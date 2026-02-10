@@ -1,4 +1,3 @@
-// src/App.tsx
 import { useState, useEffect } from 'react';
 import { Layout } from './components/layout/Layout';
 import { StartScreen } from './components/layout/StartScreen';
@@ -32,8 +31,8 @@ function App() {
 
   if (!isLoaded) return <div className="app-container flex-center">Carregando perfil...</div>;
 
-  const handleLogin = (username: string) => {
-    login(username);
+  const handleLogin = (username: string, password: string) => {
+    return login(username, password); 
   };
 
   const handleLogout = () => {

@@ -1,28 +1,48 @@
-// src/components/layout/StartScreen.tsx
 import React, { useState } from 'react';
 import patternsData from '../../data/patterns.json';
 import type { UserProfile } from '../../types';
 import './start.css';
 
 interface StartScreenProps {
-    onLogin: (username: string) => void;
+    onLogin: (username: string, password: string) => { success: boolean; message?: string };
     existingUsers: Record<string, UserProfile>;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onLogin, existingUsers }) => {
     const [activeModal, setActiveModal] = useState<'none' | 'login' | 'manual' | 'library'>('none');
     const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMsg, setErrorMsg] = useState('');
+    const [selectedUserForLogin, setSelectedUserForLogin] = useState<string | null>(null);
     
     // Converte users para lista
     const userList = Object.values(existingUsers);
 
-    const handleLoginSubmit = (e: React.FormEvent) => {
+    const handleAuthSubmit = (e: React.FormEvent, nameToUse: string) => {
         e.preventDefault();
-        if (username.trim()) onLogin(username);
+        setErrorMsg('');
+        
+        const result = onLogin(nameToUse, password);
+        
+        if (!result.success) {
+            setErrorMsg(result.message || 'Erro ao autenticar');
+        } else {
+        }
     };
 
-    const handleQuickLogin = (name: string) => onLogin(name);
-    const closeModal = () => setActiveModal('none');
+    const handleUserClick = (name: string) => {
+        setSelectedUserForLogin(name);
+        setPassword(''); // Limpa senha anterior
+        setErrorMsg('');
+    };
+
+    const closeModal = () => {
+        setActiveModal('none');
+        setUsername('');
+        setPassword('');
+        setErrorMsg('');
+        setSelectedUserForLogin(null);
+    };
 
     return (
         <div className="start-screen animate-enter">
@@ -136,71 +156,98 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onLogin, existingUsers
                     <div className="modal-content-manual" style={{maxWidth: '450px', overflow: 'hidden'}} onClick={e => e.stopPropagation()}>
                         <div className="manual-header">
                             <div className="manual-title">
-                                <h2>Login</h2>
-                                <span>Acesso Restrito</span>
+                                <h2>{selectedUserForLogin ? 'Autenticação' : 'Acesso'}</h2>
+                                <span>{selectedUserForLogin ? `Bem-vindo de volta, ${selectedUserForLogin}` : 'Selecione ou Crie'}</span>
                             </div>
                             <button className="modal-close-btn" onClick={closeModal}>✕</button>
                         </div>
                         
-                        <div className="manual-scroll-area">
-                             {/* Lista de Usuários */}
-                             {userList.length > 0 && (
+                        {/* CENÁRIO 1: Lista de Usuários (Se ninguém selecionado) */}
+                            {!selectedUserForLogin && userList.length > 0 && (
                                 <div className="flex flex-col gap-2 mb-4">
                                     <p className="section-label">Contas Locais</p>
                                     {userList.map(u => (
                                         <button 
-                                            key={u.name}
-                                            onClick={() => handleQuickLogin(u.name)}
+                                            key={u.name} 
+                                            onClick={() => handleUserClick(u.name)}
+                                            className="user-list-btn"
                                             style={{
                                                 padding: '1rem',
-                                                background: 'rgba(255,255,255,0.05)',
-                                                border: '1px solid rgba(255,255,255,0.1)',
                                                 borderRadius: '8px',
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
                                                 alignItems: 'center',
-                                                color: 'white',
-                                                cursor: 'pointer'
+                                                cursor: 'pointer',
+                                                textAlign: 'left'
                                             }}
                                         >
-                                            <div style={{textAlign: 'left'}}>
+                                            <div>
                                                 <span style={{fontWeight: 'bold', display: 'block'}}>{u.name}</span>
-                                                <span style={{fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase'}}>{u.title}</span>
+                                                <span className="subtitle" style={{fontSize: '0.75rem', textTransform: 'uppercase'}}>{u.title}</span>
                                             </div>
-                                            <span>➔</span>
+                                            <span>🔒</span>
                                         </button>
                                     ))}
-                                    <div style={{height: '1px', background: 'rgba(255,255,255,0.1)', margin: '1rem 0'}}></div>
+                                    <div style={{height: '1px', background: '#e2e8f0', margin: '1rem 0'}}></div>
                                 </div>
                             )}
 
-                            <form style={{display: 'flex', flexDirection: 'column', gap: '1rem'}} onSubmit={handleLoginSubmit}>
-                                <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'left'}}>
-                                    <label style={{fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)', textTransform: 'uppercase'}}>
-                                        Novo Investigador
-                                    </label>
-                                    <input 
-                                        type="text" 
-                                        value={username}
-                                        onChange={e => setUsername(e.target.value)}
-                                        placeholder="Digite seu codinome..."
-                                        autoFocus
-                                        required
-                                        style={{
-                                            padding: '1rem',
-                                            background: '#020617',
-                                            border: '1px solid #1e293b',
-                                            borderRadius: '8px',
-                                            color: 'white',
-                                            fontFamily: 'inherit'
-                                        }}
-                                    />
-                                </div>
-                                <button type="submit" className="menu-btn btn-play">
-                                    Iniciar Sessão
-                                </button>
+                            {/* CENÁRIO 2: Login em Usuário Selecionado */}
+                            {selectedUserForLogin && (
+                                <form onSubmit={(e) => handleAuthSubmit(e, selectedUserForLogin)} style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                                    <div style={{textAlign: 'left'}}>
+                                        <label className="section-label" style={{marginBottom: '0.5rem'}}>Senha para {selectedUserForLogin}</label>
+                                        <input 
+                                            type="password" 
+                                            value={password}
+                                            onChange={e => setPassword(e.target.value)}
+                                            placeholder="Digite sua senha..."
+                                            autoFocus
+                                            required
+                                            style={{width: '100%', padding: '1rem', borderRadius: '8px'}}
+                                        />
+                                    </div>
+                                    
+                                    {errorMsg && <div style={{color: 'var(--color-danger)', fontSize: '0.9rem', fontWeight: 'bold'}}>{errorMsg}</div>}
+
+                                    <div style={{display: 'flex', gap: '1rem'}}>
+                                        <button type="button" className="menu-btn btn-secondary" style={{flex: 1}} onClick={() => setSelectedUserForLogin(null)}>Voltar</button>
+                                        <button type="submit" className="menu-btn btn-play" style={{flex: 1}}>Entrar</button>
+                                    </div>
+                                </form>
+                            )}
+
+                            {/* CENÁRIO 3: Novo Registro (Se ninguém selecionado) */}
+                            {!selectedUserForLogin && (
+                                <form onSubmit={(e) => handleAuthSubmit(e, username)} style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                                    <p className="section-label">Novo Investigador</p>
+                                    
+                                    <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'left'}}>
+                                        <input 
+                                            type="text" 
+                                            value={username}
+                                            onChange={e => setUsername(e.target.value)}
+                                            placeholder="Codinome (Usuário)..."
+                                            required
+                                            style={{padding: '1rem', borderRadius: '8px'}}
+                                        />
+                                        <input 
+                                            type="password" 
+                                            value={password}
+                                            onChange={e => setPassword(e.target.value)}
+                                            placeholder="Crie uma senha..."
+                                            required
+                                            style={{padding: '1rem', borderRadius: '8px'}}
+                                        />
+                                    </div>
+
+                                    {errorMsg && <div style={{color: 'var(--color-danger)', fontSize: '0.9rem', fontWeight: 'bold'}}>{errorMsg}</div>}
+
+                                    <button type="submit" className="menu-btn btn-play">
+                                        Criar Perfil
+                                    </button>
                             </form>
-                        </div>
+                        )}
                     </div>
                 </div>
             )}

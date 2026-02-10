@@ -4,7 +4,7 @@ import { calculateLevel, getTitleForLevel } from '../utils/gamification';
 
 const STORAGE_KEY = 'PATTERN_QUEST_SAVE_V1';
 
-const INITIAL_PROFILE_TEMPLATE: Omit<UserProfile, 'name'> = {
+const INITIAL_PROFILE_TEMPLATE: Omit<UserProfile, 'name'| 'password'> = {
     title: "Estagiário Investigador",
     level: 1,
     xp: 0,
@@ -41,21 +41,34 @@ export const usePersistence = () => {
     };
 
     // 2. Função de Login / Cadastro
-    const login = (username: string) => {
+    const login = (username: string , passwordInput: string): { success: boolean; message?: string } => {
+        if (!username) return { success: false, message: 'Nome obrigatório' };
+        
         const key = username.trim();
+        if (key === "") return { success: false, message: 'Nome inválido' };
         
         if (allUsers[key]) {
             // Usuário JÁ EXISTE: Carrega ele
-            setCurrentUser(allUsers[key]);
+            const storedUser=allUsers[key];
+            if (storedUser.password && storedUser.password !== passwordInput) {
+                return { success: false, message: 'Senha incorreta!' };
+            }
+            setCurrentUser(storedUser);
+            return { success: true };
         } else {
+            if (!passwordInput || passwordInput.length < 3) {
+                return { success: false, message: 'Crie uma senha de pelo menos 3 dígitos.' };
+            }
             // Usuário NOVO: Cria e salva
             const newUser: UserProfile = {
                 ...INITIAL_PROFILE_TEMPLATE,
-                name: key
+                name: key,
+                password: passwordInput
             };
             const newDb = { ...allUsers, [key]: newUser };
             persistData(newDb);
             setCurrentUser(newUser);
+            return { success: true };
         }
     };
 
