@@ -2,11 +2,13 @@
 import { useState } from 'react';
 import { Layout } from './components/layout/Layout';
 import { PhaseMap } from './components/narrative/PhaseMap';
+import { QuizEngine } from './components/game/QuizEngine';
+import phasesData from './data/phases.json';
 import './styles/global.css';
 
 // Mock de dados para teste visual
 const mockUser = {
-  name: "Dev. Alex",
+  name: "Dev. Lara",
   title: "Estagiário Investigador" as const,
   level: 1,
   xp: 0,
@@ -22,13 +24,29 @@ const mockSession = {
 };
 
 function App() {
-  const [view, setView] = useState('map');
+  const [view, setView] = useState<'map' | 'game'>('map');
+  const [activePhaseId, setActivePhaseId] = useState<string | null>(null);
 
   const handleSelectPhase = (phaseId: string) => {
     console.log(`Fase selecionada: ${phaseId}`);
     alert(`Iniciando fase: ${phaseId}`);
-    // Futuramente aqui mudaremos o setView('narrative') ou setView('game')
+    setActivePhaseId(phaseId);
+    setView('game');
   };
+
+  const handleIntegrityLoss = () => {
+    console.log("Dano no sistema! -20%");
+    mockSession.integrity -= 20;
+  };
+
+  const handlePhaseComplete = (score: number, passed: boolean) => {
+    alert(`Fase Terminada! Score: ${score}. Passou? ${passed ? 'SIM' : 'NÃO'}`);
+    setView('map');
+    setActivePhaseId(null);
+  };
+
+  // Encontra o objeto da fase atual
+  const activePhase = phasesData.find(p => p.id === activePhaseId);
 
   return (
     <Layout user={mockUser} session={mockSession}>
@@ -36,6 +54,13 @@ function App() {
         <PhaseMap 
           completedPhases={mockUser.completedPhases} 
           onSelectPhase={handleSelectPhase} 
+        />
+      )}
+      {view === 'game' && activePhase && (
+        <QuizEngine 
+          phase={activePhase}
+          onIntegrityLoss={handleIntegrityLoss}
+          onCompletePhase={handlePhaseComplete}
         />
       )}
     </Layout>

@@ -1,0 +1,128 @@
+.quiz-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* --- Cabeçalho da Questão (Timer e Info) --- */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.question-meta {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Timer Bar */
+.timer-container {
+  flex-grow: 1;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  margin: 0 1.5rem;
+  overflow: hidden;
+}
+
+.timer-fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 1s linear; /* Animação suave de 1s */
+}
+
+.timer-fill.warning { background: var(--color-warning); }
+.timer-fill.danger { background: var(--color-danger); }
+
+
+/* --- O Problema (Card Principal) --- */
+.problem-card {
+  background: var(--bg-card);
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  border: 1px solid rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Detalhe lateral colorido baseado na dificuldade */
+.problem-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 6px;
+  background: var(--color-primary);
+}
+
+.problem-card h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.problem-text {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+
+/* --- Opções de Resposta --- */
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .options-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.option-btn {
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.option-btn:hover:not(:disabled) {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-float);
+}
+
+/* Estados de Feedback */
+.option-btn.correct {
+  background: #dcfce7; 
+  border-color: var(--color-success);
+  color: #166534;
+}
+
+.option-btn.wrong {
+  background: #fee2e2; 
+  border-color: var(--color-danger);
+  color: #991b1b; 
+  opacity: 0.7;
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+  transform: none;
+}
