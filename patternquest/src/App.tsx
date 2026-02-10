@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout } from './components/layout/Layout';
+import { Layout } from './components/layout/layout';
 import { SystemDialog } from './components/layout/SystemDialog';
 import { StartScreen } from './components/layout/StartScreen';
 import { PhaseMap } from './components/narrative/PhaseMap';
@@ -44,18 +44,18 @@ function App() {
   });
 
   useEffect(() => {
-  const handleGlobalClick = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
+    const handleGlobalClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
 
-    // Verifica se o clique ocorreu dentro de um botão
-    if (target.closest('button, .option-btn')) {
-      playSound('click.mp3', soundEnabled);
-    }
-  };
+      // Verifica se o clique ocorreu dentro de um botão
+      if (target) {
+        playSound('click.mp3', soundEnabled);
+      }
+    };
 
-  document.addEventListener('click', handleGlobalClick);
-  return () => document.removeEventListener('click', handleGlobalClick);
-}, [soundEnabled]);
+    document.addEventListener('click', handleGlobalClick);
+    return () => document.removeEventListener('click', handleGlobalClick);
+  }, [soundEnabled]);
 
   //Efeito para aplicar tema
   useEffect(() => {

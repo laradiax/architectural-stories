@@ -6,7 +6,7 @@ import './map.css';
 interface PhaseMapProps {
     phases: Phase[];
     completedPhases: string[]; // IDs das fases completadas
-    onSelectPhase: (phaseId: string) => void;
+    onSelectPhase: (id: string) => void;
 }
 
 export const PhaseMap: React.FC<PhaseMapProps> = ({ phases, completedPhases, onSelectPhase }) => {
@@ -15,7 +15,8 @@ export const PhaseMap: React.FC<PhaseMapProps> = ({ phases, completedPhases, onS
     const getPhaseStatus = (phaseIndex: number, phaseId: string) => {
         const isCompleted = completedPhases.includes(phaseId);
         // Desbloqueado se: é a primeira fase OU a fase anterior foi completada
-        const isUnlocked = phaseIndex === 0 || completedPhases.includes(phaseId[phaseIndex - 1]);
+        const previousPhase = phases[phaseIndex - 1];
+        const isUnlocked = phaseIndex === 0 || (previousPhase && completedPhases.includes(previousPhase.id));
         
         if (isCompleted) return 'completed';
         if (isUnlocked) return 'active';
