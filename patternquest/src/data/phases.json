@@ -4,7 +4,7 @@
     "title": "Distrito da Garagem",
     "subtitle": "O Código Sem Fronteiras",
     "theme": "garage",
-    "requiredScore": 300,
+    "requiredScore": 150,
     "narrativeIntro": "Bem-vindo à TechCity. Sua primeira missão é numa startup caótica. O código cresceu sem estrutura e tudo está misturado.",
     "dominantPattern": "Layers",
     "questions": [

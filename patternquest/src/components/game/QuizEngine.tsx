@@ -1,6 +1,6 @@
-// src/components/game/QuizEngine.tsx
 import React, { useState, useEffect } from 'react';
-import type { Phase, Question } from '../../types'; 
+import type { Phase } from '../../types';
+import patternsData from '../../data/patterns.json';
 import './game.css';
 
 interface QuizEngineProps {
@@ -22,6 +22,11 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
   const [options, setOptions] = useState<any[]>([]); // Opções embaralhadas
 
   const currentQuestion = phase.questions[currentQIndex];
+
+  const getPatternName = (id: string) => {
+    const pattern = patternsData.find(p => p.id === id);
+    return pattern ? pattern.name : id.toUpperCase(); // Fallback se não achar
+  };
 
   // 1. Setup da Questão (Embaralhar opções)
   useEffect(() => {
@@ -125,7 +130,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
               onClick={() => handleAnswer(opt.id, opt.isCorrect)}
               disabled={isAnswered}
             >
-              {opt.id.toUpperCase().replace('_', ' ')}
+              {getPatternName(opt.id)}
             </button>
           );
         })}
@@ -133,8 +138,8 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
       {isAnswered && (
         <div className="feedback-panel animate-enter">
-            <p className="text-center mt-4 font-bold text-slate-500">
-                {currentQuestion.reason}
+            <p className="text-center mt-4 font-bold text-slate-500 bg-slate-100 p-4 rounded-lg border border-slate-200">
+                💡{currentQuestion.reason}
             </p>
         </div>
       )}
