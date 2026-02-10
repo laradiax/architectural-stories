@@ -6,11 +6,12 @@ import { QuizEngine } from './components/game/QuizEngine';
 import { PhaseResult } from './components/game/PhaseResult';
 import phasesData from './data/phases.json';
 import { usePersistence } from './hooks/usePersistence';
+import { Briefing } from './components/narrative/Briefing';
 import './styles/global.css';
 
 function App() {
   const { user, isLoaded, saveProgress, resetSave } = usePersistence();
-  const [view, setView] = useState<'map' | 'game' | 'result'>('map');
+  const [view, setView] = useState<'map' | 'briefing' | 'game' | 'result'>('map');
   const [activePhaseId, setActivePhaseId] = useState<string | null>(null);
   const [sessionIntegrity, setSessionIntegrity] = useState(100);
   const [sessionScore, setSessionScore] = useState(0);
@@ -18,13 +19,25 @@ function App() {
 
   if (!isLoaded) return <div className="app-container flex-center">Carregando perfil...</div>;
 
+  // 1. Selecionar Fase (Abre Briefing)
   const handleSelectPhase = (phaseId: string) => {
     console.log(`Fase selecionada: ${phaseId}`);
     alert(`Iniciando fase: ${phaseId}`);
     setActivePhaseId(phaseId);
+    setView('briefing');
+  };
+
+  // 2. Aceitar Missão (Começa o Jogo)
+  const handleStartMission = () => {
     setSessionIntegrity(100);
     setSessionScore(0);
     setView('game');
+  };
+
+  // 3. Cancelar no Briefing
+  const handleCancelBriefing = () => {
+    setActivePhaseId(null);
+    setView('map');
   };
 
   const handleIntegrityLoss = () => {
@@ -32,7 +45,7 @@ function App() {
     setSessionIntegrity(prev => Math.max(0, prev - 20));
   };
 
-  // 3. Fim da Fase
+  // 4. Fim da Fase
   const handlePhaseComplete = (score: number, passed: boolean) => {
     const integrityPassed = sessionIntegrity > 0;
     const finalPassed = passed && integrityPassed;
@@ -56,6 +69,7 @@ function App() {
     setSessionIntegrity(100); // Visual reset
   };
 
+  // 5. Reinicia a Fase
   const handleRetry = () => {
     // Reinicia a mesma fase
     setSessionIntegrity(100);
@@ -78,6 +92,13 @@ function App() {
         <PhaseMap 
           completedPhases={user.completedPhases} 
           onSelectPhase={handleSelectPhase} 
+        />
+      )}
+      {view === 'briefing' && activePhase && (
+        <Briefing 
+            phase={activePhase}
+            onStartMission={handleStartMission}
+            onCancel={handleCancelBriefing}
         />
       )}
       {view === 'game' && activePhase && (
