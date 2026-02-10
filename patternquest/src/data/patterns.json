@@ -9,7 +9,7 @@
   },
   {
     "id": "mvc",
-    "name": "Model-View-Controller (MVC)",
+    "name": "Model-View-Controller",
     "type": "Interface",
     "desc": "Separa a aplicação em Dados (Model), Interface (View) e Controle (Controller).",
     "pros": "Facilita manutenção de interfaces complexas.",
@@ -33,7 +33,7 @@
   },
   {
     "id": "soa",
-    "name": "Service-Oriented Arch (SOA)",
+    "name": "Service-Oriented Arch",
     "type": "Integração",
     "desc": "Sistemas completos expõem serviços reutilizáveis via contrato padronizado.",
     "pros": "Interoperabilidade entre tecnologias diferentes.",
@@ -49,7 +49,7 @@
   },
   {
     "id": "eda",
-    "name": "Event-Driven Architecture",
+    "name": "Event-Driven Arch",
     "type": "Mensageria",
     "desc": "Componentes reagem a eventos (fatos que ocorreram) de forma assíncrona.",
     "pros": "Desacoplamento temporal e escalabilidade.",
@@ -119,7 +119,22 @@
     "pros": "Desacoplamento de produtores e consumidores.",
     "cons": "Ponto único de falha se não for clusterizado."
   },
-  
+  {
+    "id": "pub_sub",
+    "name": "Publish-Subscribe",
+    "type": "Mensageria",
+    "desc": "Publicadores enviam mensagens para tópicos sem saber quem são os assinantes.",
+    "pros": "Desacoplamento extremo e escalabilidade.",
+    "cons": "Sem garantia de entrega imediata."
+  },
+  {
+    "id": "blackboard",
+    "name": "Blackboard",
+    "type": "IA/Dados",
+    "desc": "Especialistas independentes colaboram escrevendo em um espaço compartilhado.",
+    "pros": "Resolve problemas complexos e não determinísticos.",
+    "cons": "Dificuldade de depuração e controle."
+  },
   
   { "id": "monolith", "name": "Monólito", "type": "Anti-Pattern" },
   { "id": "proxy", "name": "Proxy", "type": "Estrutural" },

@@ -4,8 +4,8 @@
     "title": "Distrito da Garagem",
     "subtitle": "O Código Sem Fronteiras",
     "theme": "garage",
-    "requiredScore": 150,
-    "narrativeIntro": "Bem-vindo à TechCity. Sua primeira missão é numa startup caótica. O código cresceu sem estrutura e tudo está misturado.",
+    "requiredScore": 50,
+    "narrativeIntro": "Bem-vindo à TechCity, Investigador. Sua jornada começa numa startup de garagem. O time cresceu rápido e ignorou padrões. O código está misturado, a UI acessa o banco e bugs visuais corrompem dados. Sua missão é organizar a casa.",
     "dominantPattern": "Layers",
     "questions": [
       {
@@ -42,14 +42,14 @@
     "title": "Centro Comercial",
     "subtitle": "O Monstro de Uma Tela Só",
     "theme": "corporate",
-    "requiredScore": 400,
-    "narrativeIntro": "Você foi promovido. Agora lidamos com sistemas corporativos. O problema aqui é interface acoplada demais aos dados.",
+    "requiredScore": 100,
+    "narrativeIntro": "Promoção concedida. Agora você lida com sistemas corporativos legados. O problema aqui é interfaces gigantescas acopladas diretamente aos dados, tornando a manutenção um pesadelo.",
     "dominantPattern": "MVC",
     "questions": [
       {
         "id": "q4_giant_file",
         "title": "O Arquivo de 5.000 Linhas",
-        "problem": "Uma única página web contém HTML, Validação de CPF e Comandos SQL. Dar manutenção é um pesadelo.",
+        "problem": "Uma única página web contém HTML, Validação de CPF e Comandos SQL. Qualquer mudança é arriscada.",
         "correctId": "mvc",
         "wrongOptions": ["camadas", "microkernel", "proxy"],
         "reason": "O MVC separa Model (dados), View (interface) e Controller (fluxo), organizando o caos da interface.",
@@ -63,6 +63,15 @@
         "wrongOptions": ["mvc", "eda", "saga"],
         "reason": "Pipe and Filter divide o processamento em etapas independentes que podem ser recombinadas.",
         "difficulty": "medium"
+      },
+      {
+        "id": "q17_ghost_image",
+        "title": "A Imagem Fantasma",
+        "problem": "Uma página carrega 100 fotos de alta resolução de uma vez, travando o navegador do usuário.",
+        "correctId": "proxy",
+        "wrongOptions": ["adapter", "facade", "singleton"],
+        "reason": "O Virtual Proxy permite Lazy Loading, carregando as imagens pesadas apenas quando necessário.",
+        "difficulty": "medium"
       }
     ]
   },
@@ -71,8 +80,8 @@
     "title": "Distrito Industrial",
     "subtitle": "A Integração Infernal",
     "theme": "legacy",
-    "requiredScore": 400,
-    "narrativeIntro": "Fábricas antigas e sistemas legados. Tudo está conectado ponto-a-ponto, criando um espaguete de integrações.",
+    "requiredScore": 150,
+    "narrativeIntro": "Bem-vindo ao parque industrial. Aqui, sistemas de décadas diferentes tentam conversar. É uma teia de aranha de integrações ponto-a-ponto que falham em cascata.",
     "dominantPattern": "Integration",
     "questions": [
       {
@@ -87,7 +96,7 @@
       {
         "id": "q15_xml_json",
         "title": "O Tradutor Universal",
-        "problem": "O sistema moderno fala JSON. O legado fala XML. Eles não se entendem.",
+        "problem": "O sistema moderno fala JSON. O legado fala XML. Eles não se entendem e a integração falha.",
         "correctId": "adapter",
         "wrongOptions": ["facade", "proxy", "bridge"],
         "reason": "O Adapter traduz a interface de um componente para o formato esperado pelo outro.",
@@ -101,6 +110,15 @@
         "wrongOptions": ["adapter", "singleton", "observer"],
         "reason": "A Facade cria uma interface simplificada e única que agrupa as chamadas complexas do backend.",
         "difficulty": "medium"
+      },
+      {
+        "id": "q11_queue",
+        "title": "A Fila de Tarefas",
+        "problem": "O usuário faz upload de uma foto e fica preso na tela de carregamento por 30 segundos esperando o processamento.",
+        "correctId": "broker",
+        "wrongOptions": ["mvc", "client_server", "p2p"],
+        "reason": "O Broker (Message Queue) desacopla o envio do processamento, liberando o usuário imediatamente.",
+        "difficulty": "medium"
       }
     ]
   },
@@ -109,8 +127,8 @@
     "title": "Distrito Digital",
     "subtitle": "Escala ou Morte",
     "theme": "cloud",
-    "requiredScore": 500,
-    "narrativeIntro": "O App viralizou. Milhões de acessos. O servidor central está derretendo. Precisamos de escalabilidade.",
+    "requiredScore": 150,
+    "narrativeIntro": "O App da TechCity viralizou. Temos milhões de acessos simultâneos. O servidor central está derretendo. Precisamos de escalabilidade elástica e desacoplamento total.",
     "dominantPattern": "Distributed",
     "questions": [
       {
@@ -132,6 +150,15 @@
         "difficulty": "hard"
       },
       {
+        "id": "q8_feed",
+        "title": "Feed de Notícias",
+        "problem": "O publicador de notícias precisa saber a lista exata de todos os assinantes (Esporte, Política). Se adicionar uma categoria nova, quebra o publicador.",
+        "correctId": "pub_sub",
+        "wrongOptions": ["observer", "mediator", "chain"],
+        "reason": "Publish-Subscribe desacopla quem envia de quem recebe através de tópicos.",
+        "difficulty": "hard"
+      },
+      {
         "id": "q12_p2p",
         "title": "Servidor Caro",
         "problem": "Distribuir um arquivo de 50GB para 1 milhão de usuários vai falir a empresa em custos de banda de servidor.",
@@ -147,8 +174,8 @@
     "title": "Torre Central",
     "subtitle": "O Caos da Coordenação",
     "theme": "governance",
-    "requiredScore": 500,
-    "narrativeIntro": "O nível final. Sistemas complexos de aviação e bancários. O erro aqui custa vidas ou bilhões.",
+    "requiredScore": 200,
+    "narrativeIntro": "Você chegou ao topo. A Torre de Controle gerencia sistemas críticos de aviação e bancários. Aqui, um erro de coordenação custa vidas ou bilhões. Proteja o núcleo a todo custo.",
     "dominantPattern": "Orchestration",
     "questions": [
       {
@@ -176,6 +203,15 @@
         "correctId": "hexagonal",
         "wrongOptions": ["mvc", "layers", "microkernel"],
         "reason": "Arquitetura Hexagonal (Ports & Adapters) blinda o domínio (núcleo), permitindo que ele funcione sem saber se vem da Web ou do Teste.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q20_ai_recog",
+        "title": "Reconhecimento Impossível",
+        "problem": "Um sistema de IA precisa reconhecer texto manuscrito, mas nenhum algoritmo sozinho é bom o suficiente. Eles precisam colaborar.",
+        "correctId": "blackboard",
+        "wrongOptions": ["strategy", "chain", "visitor"],
+        "reason": "O Blackboard permite que vários agentes especialistas contribuam parcialmente para resolver um problema complexo e não determinístico.",
         "difficulty": "hard"
       }
     ]
