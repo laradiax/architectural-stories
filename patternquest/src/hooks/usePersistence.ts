@@ -4,8 +4,7 @@ import { calculateLevel, getTitleForLevel } from '../utils/gamification';
 
 const STORAGE_KEY = 'PATTERN_QUEST_SAVE_V1';
 
-const INITIAL_PROFILE: UserProfile = {
-    name: "Investigador",
+const INITIAL_PROFILE_TEMPLATE: Omit<UserProfile, 'name'> = {
     title: "Estagiário Investigador",
     level: 1,
     xp: 0,
@@ -14,8 +13,11 @@ const INITIAL_PROFILE: UserProfile = {
     completedPhases: []
 };
 
+type SaveDatabase = Record<string, UserProfile>;
+
 export const usePersistence = () => {
-    const [user, setUser] = useState<UserProfile>(INITIAL_PROFILE);
+    const [allUsers, setAllUsers] = useState<SaveDatabase>({});
+    const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
 
     // 1. Carregar ao iniciar
@@ -23,25 +25,55 @@ export const usePersistence = () => {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
             try {
-                setUser(JSON.parse(savedData));
+                setAllUsers(JSON.parse(savedData));
             } catch (e) {
-                console.error("Erro ao carregar save:", e);
-                setUser(INITIAL_PROFILE);
+                console.error("Erro ao carregar save V2:", e);
+                setAllUsers({});
             }
         }
         setIsLoaded(true);
     }, []);
 
-    // 2. Salvar Progresso (Chamado ao completar fase)
+    // Helper interno para persistir no localStorage
+    const persistData = (data: SaveDatabase) => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        setAllUsers(data);
+    };
+
+    // 2. Função de Login / Cadastro
+    const login = (username: string) => {
+        const key = username.trim();
+        
+        if (allUsers[key]) {
+            // Usuário JÁ EXISTE: Carrega ele
+            setCurrentUser(allUsers[key]);
+        } else {
+            // Usuário NOVO: Cria e salva
+            const newUser: UserProfile = {
+                ...INITIAL_PROFILE_TEMPLATE,
+                name: key
+            };
+            const newDb = { ...allUsers, [key]: newUser };
+            persistData(newDb);
+            setCurrentUser(newUser);
+        }
+    };
+
+    // 3. Logout
+    const logout = () => {
+        setCurrentUser(null);
+    };
+
+    // 4. Salvar Progresso (Chamado ao completar fase)
     const saveProgress = (phaseId: string, score: number) => {
-        setUser((prevUser) => {
+        if (!currentUser) return;
             // Verifica se é a primeira vez completando essa fase
-            const isFirstTime = !prevUser.completedPhases.includes(phaseId);
+            const isFirstTime = !currentUser.completedPhases.includes(phaseId);
             
             // Calcula novo XP
             // (Replay dá 10% de XP, Primeira vez dá 100%)
             const xpGained = isFirstTime ? score : Math.floor(score * 0.1);
-            const newXP = prevUser.xp + xpGained;
+            const newXP = currentUser.xp + xpGained;
             
             // Recalcula Nível e Título
             const newLevel = calculateLevel(newXP);
@@ -49,29 +81,41 @@ export const usePersistence = () => {
 
             // Atualiza lista de fases completadas
             const newCompletedPhases = isFirstTime 
-                ? [...prevUser.completedPhases, phaseId]
-                : prevUser.completedPhases;
+                ? [...currentUser.completedPhases, phaseId]
+                : currentUser.completedPhases;
 
             const updatedUser: UserProfile = {
-                ...prevUser,
+                ...currentUser,
                 xp: newXP,
                 level: newLevel,
                 title: newTitle,
                 completedPhases: newCompletedPhases
             };
 
-            // Salva no disco
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
-            
-            return updatedUser;
-        });
+        // Atualiza o estado atual e o banco de dados
+        setCurrentUser(updatedUser);
+        
+        const newDb = {
+            ...allUsers,
+            [currentUser.name]: updatedUser
+        };
+        persistData(newDb);
     };
 
-    // 3. Resetar Save (Para testes)
+    // 5. Resetar Save (Para testes)
     const resetSave = () => {
-        localStorage.removeItem(STORAGE_KEY);
-        setUser(INITIAL_PROFILE);
+        if (window.confirm("Isso apagará TODOS os usuários. Tem certeza?")) {
+            localStorage.removeItem(STORAGE_KEY);
+            setAllUsers({});
+            setCurrentUser(null);
+        }
     };
 
-    return { user, isLoaded, saveProgress, resetSave };
+    return { currentUser,
+        allUsers,       
+        isLoaded, 
+        login, 
+        logout,
+        saveProgress, 
+        resetSave };
 };
