@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { UserProfile } from '../../types/game';
 import './start.css';
+import patternsData from '../../data/patterns-pt.json'; 
 
 interface StartScreenProps {
     onLogin: (username: string, password: string) => { success: boolean; message?: string };
@@ -252,29 +253,83 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onLogin, existingUsers
             )}
 
             {/* --- MODAL LIBRARY --- */}
-            {activeModal === 'library' && (
-                <div className="modal-overlay" onClick={closeModal}>
-                    <div className="modal-content-manual" onClick={e => e.stopPropagation()}>
-                        <div className="manual-header">
-                            <div className="manual-title">
-                                <h2>Biblioteca</h2>
-                                <span>Padrões Arquiteturais</span>
+                {/* --- MODAL LIBRARY --- */}
+                {activeModal === 'library' && (
+                    <div className="modal-overlay" onClick={closeModal}>
+                        <div className="modal-content-manual" onClick={e => e.stopPropagation()}>
+                            <div className="manual-header">
+                                <div className="manual-title">
+                                    <h2>Biblioteca de Padrões</h2>
+                                    <span>Fichas Técnicas de Arquitetura</span>
+                                </div>
+                                <button className="modal-close-btn" onClick={closeModal}>✕</button>
                             </div>
-                            <button className="modal-close-btn" onClick={closeModal}>✕</button>
-                        </div>
-                        <div className="manual-scroll-area">
-                            <div className="flow-grid" style={{gridTemplateColumns: '1fr'}}>
-                                {t.map((p: any) => (
-                                    <div key={p.id} className="flow-step-card" style={{borderLeft: '4px solid var(--color-tech)'}}>
-                                        <h4 style={{color: 'var(--color-tech)', fontSize: '1.2rem', fontWeight: 'bold'}}>{p.name}</h4>
-                                        <p>{p.desc}</p>
-                                    </div>
-                                ))}
+
+                            <div className="manual-scroll-area">
+                                <div className="flow-grid" style={{ gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+                                    {patternsData.map((p: any) => (
+                                        <div key={p.id} className="flow-step-card" 
+                                            style={{ 
+                                                borderLeft: '5px solid #0ea5e9', // Azul mais forte
+                                                padding: '1.5rem',
+                                                backgroundColor: '#ffffff', // Fundo branco sólido
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                                                marginBottom: '1rem'
+                                            }}>
+                                            
+                                            {/* Cabeçalho */}
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                                <h4 style={{ color: '#0f172a', fontSize: '1.25rem', fontWeight: '800', margin: 0 }}>
+                                                    {p.name}
+                                                </h4>
+                                                <span style={{ 
+                                                    fontSize: '0.65rem', 
+                                                    backgroundColor: '#f1f5f9', 
+                                                    color: '#475569', 
+                                                    padding: '4px 10px', 
+                                                    borderRadius: '99px',
+                                                    border: '1px solid #e2e8f0',
+                                                    fontWeight: '700'
+                                                }}>
+                                                    {p.type}
+                                                </span>
+                                            </div>
+
+                                            {/* Descrição - Cor escura para ler melhor */}
+                                            <p style={{ fontSize: '0.95rem', color: '#334155', marginBottom: '1.2rem', lineHeight: '1.6', fontWeight: '500' }}>
+                                                {p.desc}
+                                            </p>
+
+                                            {/* Seção de Prós e Contras */}
+                                            {p.pros && (
+                                                <div style={{ 
+                                                    display: 'grid', 
+                                                    gridTemplateColumns: '1fr 1fr', 
+                                                    gap: '1.5rem', 
+                                                    paddingTop: '1rem', 
+                                                    borderTop: '2px dashed #f1f5f9' 
+                                                }}>
+                                                    <div>
+                                                        <div style={{ color: '#059669', fontSize: '0.75rem', fontWeight: '900', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <span style={{fontSize: '1rem'}}>✓</span> VANTAGENS
+                                                        </div>
+                                                        <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>{p.pros}</p>
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ color: '#dc2626', fontSize: '0.75rem', fontWeight: '900', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <span style={{fontSize: '1rem'}}>×</span> RISCOS
+                                                        </div>
+                                                        <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: '1.4' }}>{p.cons}</p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
         </div>
     );
 };

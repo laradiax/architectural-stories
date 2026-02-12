@@ -1,147 +1,154 @@
 [
   {
     "id": "camadas",
-    "name": "Arquitetura em Camadas",
+    "name": "Camadas (Layers)",
     "type": "Estrutural",
-    "desc": "Organiza o sistema em grupos horizontais (ex: UI, Business, Data).",
-    "pros": "Separação de responsabilidades e testabilidade.",
-    "cons": "Pode adicionar latência se houver muitas camadas."
-  },
-  {
-    "id": "mvc",
-    "name": "Model-View-Controller",
-    "type": "Interface",
-    "desc": "Separa a aplicação em Dados (Model), Interface (View) e Controle (Controller).",
-    "pros": "Facilita manutenção de interfaces complexas.",
-    "cons": "Controller pode ficar inchado ('Massive View Controller')."
+    "desc": "Organiza o código em camadas com responsabilidades específicas (ex: Apresentação, Negócio, Dados), comunicando-se apenas com a camada inferior.",
+    "pros": "Alta manutenibilidade, organização e separação de responsabilidades.",
+    "cons": "Pode causar pequena latência e aumentar a complexidade inicial."
   },
   {
     "id": "client_server",
     "name": "Cliente-Servidor",
     "type": "Distribuído",
-    "desc": "Separa quem consome (Cliente) de quem fornece (Servidor) recursos.",
-    "pros": "Centralização de dados e segurança.",
-    "cons": "Servidor é ponto único de falha e gargalo."
+    "desc": "Divide o sistema em Servidor (dados e lógica) e Clientes (interface).",
+    "pros": "Centralização, segurança e facilidade de manutenção.",
+    "cons": "Ponto único de falha e risco de sobrecarga no servidor."
+  },
+  {
+    "id": "mvc",
+    "name": "Model-View-Controller (MVC)",
+    "type": "Interface",
+    "desc": "Separa a interface em Model (dados), View (interface) e Controller (controle).",
+    "pros": "Separação de responsabilidades, manutenção e testabilidade.",
+    "cons": "Maior complexidade para gerenciar o estado entre os componentes."
   },
   {
     "id": "pipe_filter",
     "name": "Pipe and Filter",
     "type": "Fluxo de Dados",
-    "desc": "Processamento em etapas sequenciais onde a saída de um é a entrada do próximo.",
-    "pros": "Reuso de filtros e flexibilidade.",
-    "cons": "Difícil gerenciar estado global ou erros no meio do fluxo."
+    "desc": "Processa dados em etapas independentes conectadas por pipes, onde a saída de um filtro é a entrada do próximo.",
+    "pros": "Flexibilidade, reutilização e testabilidade.",
+    "cons": "Custo de performance e necessidade de padronização dos dados."
+  },
+  {
+    "id": "eda",
+    "name": "Event-Driven Architecture",
+    "type": "Mensageria",
+    "desc": "Componentes reagem a eventos de forma assíncrona, sem dependência direta entre produtor e consumidor.",
+    "pros": "Desacoplamento, escalabilidade e resiliência.",
+    "cons": "Complexidade de depuração e consistência eventual dos dados."
   },
   {
     "id": "soa",
-    "name": "Service-Oriented Arch",
+    "name": "Service-Oriented Architecture (SOA)",
     "type": "Integração",
-    "desc": "Sistemas completos expõem serviços reutilizáveis via contrato padronizado.",
-    "pros": "Interoperabilidade entre tecnologias diferentes.",
-    "cons": "Complexidade de governança e ESB."
+    "desc": "Integra sistema corporativos por meio de serviços de negócio reutilizáveis, orquestrados por um barramento de serviços (ESB).",
+    "pros": "Reutilização, consistência e governança centralizada.",
+    "cons": "Alta complexidade e menor autonomia das equipes."
+  },
+  {
+    "id": "pub_sub",
+    "name": "Publish–Subscribe (Pub/Sub)",
+    "type": "Mensageria",
+    "desc": "Desacopla publicadores e assinantes por meio de tópicos de mensagens.",
+    "pros": "Alta escalabilidade e flexibilidade.",
+    "cons": "Dificuldade de depuração e falta de garantias de entrega."
   },
   {
     "id": "microsservicos",
     "name": "Microsserviços",
     "type": "Distribuído",
-    "desc": "Pequenos serviços autônomos que fazem uma única coisa bem feita.",
-    "pros": "Escalabilidade independente e deploy rápido.",
-    "cons": "Complexidade operacional e consistência de dados."
-  },
-  {
-    "id": "eda",
-    "name": "Event-Driven Arch",
-    "type": "Mensageria",
-    "desc": "Componentes reagem a eventos (fatos que ocorreram) de forma assíncrona.",
-    "pros": "Desacoplamento temporal e escalabilidade.",
-    "cons": "Difícil rastrear o fluxo (debug) e consistência eventual."
-  },
-  {
-    "id": "hexagonal",
-    "name": "Arquitetura Hexagonal",
-    "type": "Estrutural",
-    "desc": "Isola o núcleo da aplicação (domínio) de tecnologias externas via Portas e Adaptadores.",
-    "pros": "Testabilidade total do núcleo sem banco/UI.",
-    "cons": "Muitas interfaces e classes extras (boilerplate)."
-  },
-  {
-    "id": "p2p",
-    "name": "Peer-to-Peer (P2P)",
-    "type": "Distribuído",
-    "desc": "Rede descentralizada onde cada nó é cliente e servidor.",
-    "pros": "Alta resiliência e escalabilidade de banda.",
-    "cons": "Segurança e consistência de dados."
-  },
-  {
-    "id": "saga",
-    "name": "Saga Pattern",
-    "type": "Distribuído",
-    "desc": "Gerencia transações longas em serviços distribuídos via compensação.",
-    "pros": "Mantém consistência sem travar o banco (lock).",
-    "cons": "Complexidade de implementação (rollback manual)."
-  },
-  {
-    "id": "mediator",
-    "name": "Mediator",
-    "type": "Comportamental",
-    "desc": "Centraliza a comunicação complexa entre objetos.",
-    "pros": "Reduz dependências caóticas (N-para-N).",
-    "cons": "Mediador pode virar um 'Deus Object'."
-  },
-  {
-    "id": "facade",
-    "name": "Facade",
-    "type": "Estrutural",
-    "desc": "Fornece uma interface simplificada para um subsistema complexo.",
-    "pros": "Facilidade de uso e desacoplamento.",
-    "cons": "Pode esconder funcionalidades úteis."
-  },
-  {
-    "id": "adapter",
-    "name": "Adapter",
-    "type": "Estrutural",
-    "desc": "Permite que classes com interfaces incompatíveis trabalhem juntas.",
-    "pros": "Integração com legado.",
-    "cons": "Camada extra de processamento."
+    "desc": "Organiza o sistema em pequenos serviços independentes, cada um com sua própria lógica e banco de dados.",
+    "pros": "Autonomia, escalabilidade e resiliência.",
+    "cons": "Complexidade operacional, latência e dificuldade de depuração."
   },
   {
     "id": "microkernel",
-    "name": "Microkernel (Plugin)",
+    "name": "Microkernel",
     "type": "Estrutural",
-    "desc": "Núcleo mínimo com funcionalidades estendidas via plugins.",
-    "pros": "Extensibilidade e isolamento de features.",
-    "cons": "Complexidade no design da API do núcleo."
+    "desc": "Define um núcleo mínimo com funções essenciais, enquanto funcionalidades extras são implementadas como plugins.",
+    "pros": "Extensibilidade, flexibilidade e estabilidade.",
+    "cons": "API complexa e comunicação potencialmente lenta."
   },
   {
     "id": "broker",
     "name": "Broker",
     "type": "Mensageria",
-    "desc": "Intermediário que gerencia a comunicação (ex: filas).",
-    "pros": "Desacoplamento de produtores e consumidores.",
-    "cons": "Ponto único de falha se não for clusterizado."
+    "desc": "Um intermediário gerencia a comunicação entre produtores e consumidores (ex.: filas de mensagens).",
+    "pros": "Desacoplamento temporal, resiliência e controle de picos de carga.",
+    "cons": "Pode tornar-se um ponto único de falha e gargalo."
   },
   {
-    "id": "pub_sub",
-    "name": "Publish-Subscribe",
-    "type": "Mensageria",
-    "desc": "Publicadores enviam mensagens para tópicos sem saber quem são os assinantes.",
-    "pros": "Desacoplamento extremo e escalabilidade.",
-    "cons": "Sem garantia de entrega imediata."
+    "id": "p2p",
+    "name": "Peer-to-Peer (P2P)",
+    "type": "Distribuído",
+    "desc": "Rede descentralizada onde cada nó atua como cliente e servidor simultaneamente, sem servidor central.",
+    "pros": "Escalabilidade e alta resiliência a falhas.",
+    "cons": "Desafios de segurança, descoberta de pares e ausência de controle central."
+  },
+  {
+    "id": "hexagonal",
+    "name": "Hexagonal Architecture",
+    "type": "Estrutural",
+    "desc": "Separa o núcleo da aplicação da infraestrutura por meio de portas e adaptadores.",
+    "pros": "Alta testabilidade e flexibilidade.",
+    "cons": "Complexidade inicial elevada com muitas interfaces."
+  },
+  {
+    "id": "saga",
+    "name": "Saga Pattern",
+    "type": "Distribuído",
+    "desc": "Gerencia transações distribuídas por meio de etapas locais e ações de compensação.",
+    "pros": "Consistência de dados em sistemas distribuídos.",
+    "cons": "Implementação e depuração extremamente complexas."
+  },
+  {
+    "id": "adapter",
+    "name": "Adapter",
+    "type": "Estrutural",
+    "desc": "Converte a interface de um componente noutra esperada pelo cliente, permitindo integração entre sistemas.",
+    "pros": "Reutilização e compatibilidade com sistemas legados.",
+    "cons": "Introduz uma camada extra que aumenta a complexidade."
+  },
+  {
+    "id": "facade",
+    "name": "Facade",
+    "type": "Estrutural",
+    "desc": "Cria uma interface simplificada para um subsistema complexo, escondendo detalhes internos.",
+    "pros": "Reduz acoplamento e melhora a legibilidade.",
+    "cons": "Pode concentrar lógica e tornar-se um ponto crítico de manutenção."
+  },
+  {
+    "id": "proxy",
+    "name": "Proxy",
+    "type": "Estrutural",
+    "desc": "Controla o acesso a um objeto real, adicionando funcionalidades como cache, segurança ou lazy loading.",
+    "pros": "Separação de responsabilidades e melhoria de performance.",
+    "cons": "Pequena latência e aumento de complexidade."
+  },
+  {
+    "id": "mediator",
+    "name": "Mediator",
+    "type": "Comportamental",
+    "desc": "Centraliza a comunicação entre objetos, evitando interações diretas muitos-para-muitos.",
+    "pros": "Desacoplamento entre componentes.",
+    "cons": "O mediador pode tornar-se complexo e um ponto único de falha."
+  },
+  {
+    "id": "message_bus",
+    "name": "Message Bus (ESB)",
+    "type": "Integração",
+    "desc": "Infraestrutura centralizada onde múltiplos sistemas trocam mensagens padronizadas.",
+    "pros": "Integração padronizada entre sistemas.",
+    "cons": "Ponto único de falha e gargalo complexo de gerir."
   },
   {
     "id": "blackboard",
     "name": "Blackboard",
     "type": "IA/Dados",
-    "desc": "Especialistas independentes colaboram escrevendo em um espaço compartilhado.",
-    "pros": "Resolve problemas complexos e não determinísticos.",
-    "cons": "Dificuldade de depuração e controle."
-  },
-  
-  { "id": "monolith", "name": "Monólito", "type": "Anti-Pattern" },
-  { "id": "proxy", "name": "Proxy", "type": "Estrutural" },
-  { "id": "singleton", "name": "Singleton", "type": "Criação" },
-  { "id": "observer", "name": "Observer", "type": "Comportamental" },
-  { "id": "memento", "name": "Memento", "type": "Comportamental" },
-  { "id": "bridge", "name": "Bridge", "type": "Estrutural" },
-  { "id": "master_slave", "name": "Master-Slave", "type": "Distribuído" },
-  { "id": "two_phase_commit", "name": "2-Phase Commit", "type": "Transacional" }
+    "desc": "Especialistas independentes colaboram escrevendo descobertas parciais num espaço compartilhado até a solução emergir.",
+    "pros": "Flexibilidade para problemas sem solução clara.",
+    "cons": "Altíssima complexidade de implementação e depuração."
+  }
 ]

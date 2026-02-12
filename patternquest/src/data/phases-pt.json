@@ -34,6 +34,33 @@
         "wrongOptions": ["pipe_filter", "soa", "facade"],
         "reason": "Cliente-Servidor centraliza os dados e controla concorrência de múltiplos acessos.",
         "difficulty": "easy"
+      },
+      {
+        "id": "q21_business_rule_dup",
+        "title": "Regra Duplicada",
+        "problem": "A mesma regra de cálculo de desconto foi implementada tanto na tela quanto no backend, e agora os valores divergem.",
+        "correctId": "camadas",
+        "wrongOptions": ["mvc", "proxy", "p2p"],
+        "reason": "Separar responsabilidades em camadas evita duplicação de regras de negócio.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "q22_direct_db_ui",
+        "title": "A Tela Curiosa",
+        "problem": "A interface faz consultas SQL diretamente para montar relatórios.",
+        "correctId": "camadas",
+        "wrongOptions": ["broker", "microkernel", "pipe_filter"],
+        "reason": "A camada de apresentação não deve acessar dados diretamente.",
+        "difficulty": "easy"
+      },
+      {
+        "id": "q23_local_files",
+        "title": "Arquivos Locais Compartilhados",
+        "problem": "Funcionários compartilham arquivos JSON por e-mail para sincronizar dados.",
+        "correctId": "client_server",
+        "wrongOptions": ["p2p", "mvc", "adapter"],
+        "reason": "Cliente-Servidor centraliza dados evitando inconsistência.",
+        "difficulty": "easy"
       }
     ]
   },
@@ -80,6 +107,42 @@
         "correctId": "microkernel",
         "wrongOptions": ["mvc", "layers", "broker"],
         "reason": "Microkernel mantém núcleo mínimo e adiciona funcionalidades como plugins.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q24_controller_bloat",
+        "title": "Controller Inchado",
+        "problem": "O Controller contém regras de negócio complexas e lógica de persistência.",
+        "correctId": "mvc",
+        "wrongOptions": ["layers", "microkernel", "broker"],
+        "reason": "No MVC, o Controller coordena, mas regras devem estar no Model.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q25_pipeline_reuse",
+        "title": "Etapas Reutilizáveis",
+        "problem": "Um sistema de dados precisa aplicar validação, normalização e criptografia em sequência reutilizável.",
+        "correctId": "pipe_filter",
+        "wrongOptions": ["mvc", "facade", "adapter"],
+        "reason": "Pipe and Filter permite compor etapas independentes.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q26_heavy_object",
+        "title": "Objeto Pesado",
+        "problem": "Um relatório leva 10 segundos para carregar, mesmo quando o usuário não o visualiza.",
+        "correctId": "proxy",
+        "wrongOptions": ["singleton", "observer", "layers"],
+        "reason": "Proxy pode adiar a criação de objetos custosos (lazy loading).",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q27_plugin_system",
+        "title": "Sistema Extensível",
+        "problem": "Clientes querem adicionar módulos personalizados sem modificar o núcleo do sistema.",
+        "correctId": "microkernel",
+        "wrongOptions": ["mvc", "broker", "p2p"],
+        "reason": "Microkernel suporta extensões via plugins.",
         "difficulty": "medium"
       }
     ]
@@ -128,6 +191,42 @@
         "wrongOptions": ["mvc", "client_server", "p2p"],
         "reason": "Broker usa filas para desacoplar produtor e consumidor.",
         "difficulty": "medium"
+      },
+      {
+        "id": "q28_async_processing",
+        "title": "Processamento em Segundo Plano",
+        "problem": "Um sistema precisa processar milhares de requisições longas sem bloquear usuários.",
+        "correctId": "broker",
+        "wrongOptions": ["mvc", "layers", "proxy"],
+        "reason": "Filas desacoplam envio de processamento.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q29_standard_integration",
+        "title": "Contrato Padronizado",
+        "problem": "Sistemas heterogêneos precisam integrar via contratos bem definidos.",
+        "correctId": "soa",
+        "wrongOptions": ["mvc", "p2p", "pipe_filter"],
+        "reason": "SOA usa contratos de serviço padronizados.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q30_event_notification",
+        "title": "Notificação Desacoplada",
+        "problem": "Vários sistemas precisam reagir quando um pedido é criado.",
+        "correctId": "pub_sub",
+        "wrongOptions": ["facade", "proxy", "mvc"],
+        "reason": "Publish-Subscribe permite múltiplos assinantes reagirem a eventos.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q31_format_bridge",
+        "title": "Formato Incompatível",
+        "problem": "API externa usa protocolo diferente do interno.",
+        "correctId": "adapter",
+        "wrongOptions": ["bridge", "proxy", "observer"],
+        "reason": "Adapter converte interfaces incompatíveis.",
+        "difficulty": "medium"
       }
     ]
   },
@@ -175,6 +274,42 @@
         "wrongOptions": ["client_server", "broker", "master_slave"],
         "reason": "Peer-to-Peer distribui carga entre usuários.",
         "difficulty": "hard"
+      },
+      {
+        "id": "q32_scaling_component",
+        "title": "Escala Parcial",
+        "problem": "Apenas o módulo de pagamentos precisa escalar durante picos.",
+        "correctId": "microsservicos",
+        "wrongOptions": ["soa", "monolith", "client_server"],
+        "reason": "Microsserviços permitem escalar componentes individualmente.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q33_event_driven",
+        "title": "Sistema Reativo",
+        "problem": "Serviços precisam reagir a mudanças sem dependência direta.",
+        "correctId": "eda",
+        "wrongOptions": ["mvc", "layers", "proxy"],
+        "reason": "EDA promove desacoplamento via eventos.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q34_data_sharing",
+        "title": "Distribuição de Arquivos",
+        "problem": "Usuários compartilham arquivos grandes entre si para reduzir custo.",
+        "correctId": "p2p",
+        "wrongOptions": ["client_server", "broker", "mvc"],
+        "reason": "Peer-to-Peer distribui carga entre participantes.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q35_message_backbone",
+        "title": "Espinha Dorsal de Mensagens",
+        "problem": "Empresa quer backbone único para integração entre múltiplos sistemas.",
+        "correctId": "message_bus",
+        "wrongOptions": ["layers", "proxy", "singleton"],
+        "reason": "Message Bus padroniza comunicação corporativa.",
+        "difficulty": "hard"
       }
     ]
   },
@@ -221,6 +356,42 @@
         "correctId": "blackboard",
         "wrongOptions": ["strategy", "chain", "visitor"],
         "reason": "Blackboard permite que múltiplos especialistas cooperem para solução emergente.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q32_scaling_component",
+        "title": "Escala Parcial",
+        "problem": "Apenas o módulo de pagamentos precisa escalar durante picos.",
+        "correctId": "microsservicos",
+        "wrongOptions": ["soa", "monolith", "client_server"],
+        "reason": "Microsserviços permitem escalar componentes individualmente.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q33_event_driven",
+        "title": "Sistema Reativo",
+        "problem": "Serviços precisam reagir a mudanças sem dependência direta.",
+        "correctId": "eda",
+        "wrongOptions": ["mvc", "layers", "proxy"],
+        "reason": "EDA promove desacoplamento via eventos.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q34_data_sharing",
+        "title": "Distribuição de Arquivos",
+        "problem": "Usuários compartilham arquivos grandes entre si para reduzir custo.",
+        "correctId": "p2p",
+        "wrongOptions": ["client_server", "broker", "mvc"],
+        "reason": "Peer-to-Peer distribui carga entre participantes.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q35_message_backbone",
+        "title": "Espinha Dorsal de Mensagens",
+        "problem": "Empresa quer backbone único para integração entre múltiplos sistemas.",
+        "correctId": "message_bus",
+        "wrongOptions": ["layers", "proxy", "singleton"],
+        "reason": "Message Bus padroniza comunicação corporativa.",
         "difficulty": "hard"
       }
     ]
