@@ -2,37 +2,37 @@
   {
     "id": "p1_garage",
     "title": "Garage District",
-    "subtitle": "Code Without Borders",
+    "subtitle": "Code Without Boundaries",
     "theme": "garage",
     "requiredScore": 50,
-    "narrativeIntro": "Welcome to TechCity, Investigator. Your journey begins in a garage startup. The team grew fast and ignored patterns. The code is mixed, the UI accesses the database, and visual bugs corrupt data. Your mission is to clean up the house.",
+    "narrativeIntro": "Welcome to ArchPatterns City, Investigator. Your journey begins in a fast-growing garage startup. The team moved quickly and ignored architectural structure. UI code touches the database directly, and small visual changes are breaking critical logic. Your mission is to bring order to the chaos.",
     "dominantPattern": "Layers",
     "questions": [
       {
         "id": "q1_mixed",
-        "title": "The Mixed Code",
-        "problem": "A programmer changed a button's color and accidentally broke the password validation because UI and Business Logic were in the same file.",
+        "title": "The Tangled Code",
+        "problem": "A developer was asked to change the color of a login button. To do so, he had to edit a file that also contained password validation logic and database commands. The simple visual tweak ended up corrupting user data.",
         "correctId": "camadas",
         "wrongOptions": ["client_server", "microkernel", "pipe_filter"],
-        "reason": "Layered Architecture separates Presentation, Business, and Data, preventing visual changes from affecting critical rules.",
+        "reason": "Layered Architecture separates Presentation, Business Logic, and Data layers, preventing UI changes from impacting critical rules or data.",
         "difficulty": "easy"
       },
       {
         "id": "q2_untestable",
         "title": "The Untestable Logic",
-        "problem": "The QA team cannot test the interest calculation without spinning up the database and the full web interface.",
+        "problem": "QA needs to test a new interest calculation rule, but the logic is embedded inside a button click handler that requires a running web server and database.",
         "correctId": "camadas",
         "wrongOptions": ["mvc", "broker", "p2p"],
-        "reason": "Isolating business logic in its own layer allows for fast unit tests without external dependencies.",
+        "reason": "Isolating business logic into its own layer enables fast unit testing without external dependencies.",
         "difficulty": "easy"
       },
       {
         "id": "q3_spreadsheet",
-        "title": "The Spreadsheet of Chaos",
-        "problem": "Two salespeople try to save data to the same shared Excel spreadsheet on the network, overwriting each other's work.",
+        "title": "Spreadsheet Chaos",
+        "problem": "A small company manages its 50 customers in a shared Excel file. When two salespeople save at the same time, one overwrites the other's changes.",
         "correctId": "client_server",
         "wrongOptions": ["pipe_filter", "soa", "facade"],
-        "reason": "The Client-Server model centralizes data and manages concurrency for multiple accesses.",
+        "reason": "Client-Server centralizes data management and controls concurrent access.",
         "difficulty": "easy"
       }
     ]
@@ -40,37 +40,46 @@
   {
     "id": "p2_commercial",
     "title": "Commercial Center",
-    "subtitle": "The Single-Screen Monster",
+    "subtitle": "The One-Page Monster",
     "theme": "corporate",
     "requiredScore": 100,
-    "narrativeIntro": "Promotion granted. Now you deal with legacy corporate systems. The problem here is massive interfaces coupled directly to data, making maintenance a nightmare.",
-    "dominantPattern": "MVC",
+    "narrativeIntro": "Promotion granted. Now you deal with legacy corporate systems. Massive UI files directly manipulate business rules and database queries. Maintenance is risky and painful.",
+    "dominantPattern": "Separation",
     "questions": [
       {
         "id": "q4_giant_file",
         "title": "The 5,000-Line File",
-        "problem": "A single web page contains HTML, SSN validation, and SQL commands. Any change is risky.",
+        "problem": "A single web page contains HTML markup, CPF validation logic, and SQL statements. Any change feels dangerous.",
         "correctId": "mvc",
         "wrongOptions": ["camadas", "microkernel", "proxy"],
-        "reason": "MVC separates Model (data), View (interface), and Controller (flow), organizing the interface chaos.",
+        "reason": "MVC separates Model, View, and Controller responsibilities, reducing coupling and improving maintainability.",
         "difficulty": "medium"
       },
       {
         "id": "q5_video_proc",
-        "title": "Inflexible Processor",
-        "problem": "A giant function does: resize, watermark, and video compression. The client now wants only the watermark, but it's impossible to separate.",
+        "title": "The Inflexible Media Processor",
+        "problem": "One giant function resizes video, adds a watermark, and compresses the file. A client now wants to use only the watermark feature, but the steps cannot be separated.",
         "correctId": "pipe_filter",
         "wrongOptions": ["mvc", "eda", "saga"],
-        "reason": "Pipe and Filter divides processing into independent steps that can be recombined.",
+        "reason": "Pipe and Filter divides processing into independent, reusable stages that can be recombined.",
         "difficulty": "medium"
       },
       {
-        "id": "q17_ghost_image",
-        "title": "The Ghost Image",
-        "problem": "A page loads 100 high-resolution photos at once, freezing the user's browser.",
+        "id": "q17_proxy",
+        "title": "The Ghost Images",
+        "problem": "A webpage loads 100 high-resolution images at once, causing long loading times and browser freezes.",
         "correctId": "proxy",
         "wrongOptions": ["adapter", "facade", "singleton"],
-        "reason": "The Virtual Proxy allows Lazy Loading, loading heavy images only when necessary.",
+        "reason": "A Virtual Proxy enables lazy loading, loading heavy resources only when needed.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q10_microkernel",
+        "title": "The Unstable Browser",
+        "problem": "A team wants to build a lightweight browser core but also add complex features like ad blocking and translation without compromising stability.",
+        "correctId": "microkernel",
+        "wrongOptions": ["mvc", "layers", "broker"],
+        "reason": "Microkernel keeps the core minimal and allows features to be added as plug-ins.",
         "difficulty": "medium"
       }
     ]
@@ -78,46 +87,46 @@
   {
     "id": "p3_industrial",
     "title": "Industrial District",
-    "subtitle": "The Integration Hell",
+    "subtitle": "Integration Warfare",
     "theme": "legacy",
     "requiredScore": 150,
-    "narrativeIntro": "Welcome to the industrial park. Here, systems from different decades try to talk. It's a spiderweb of point-to-point integrations that fail in cascade.",
+    "narrativeIntro": "Welcome to the industrial park. Decades-old systems attempt to communicate through fragile point-to-point integrations. One failure triggers cascading breakdowns.",
     "dominantPattern": "Integration",
     "questions": [
       {
-        "id": "q7_point_to_point",
-        "title": "The Spiderweb",
-        "problem": "HR calls Finance, which calls Sales. If one goes down, they all go down. Adding a new system requires touching all the others.",
+        "id": "q7_soa",
+        "title": "Point-to-Point Nightmare",
+        "problem": "HR directly calls Finance and Sales systems. If one system fails, the entire hiring process collapses.",
         "correctId": "soa",
         "wrongOptions": ["mvc", "microkernel", "p2p"],
-        "reason": "SOA (or an ESB) centralizes and standardizes integration, avoiding point-to-point coupling.",
+        "reason": "SOA integrates systems through standardized services, reducing tight point-to-point coupling.",
         "difficulty": "hard"
       },
       {
-        "id": "q15_xml_json",
-        "title": "The Universal Translator",
-        "problem": "The modern system speaks JSON. The legacy one speaks XML. They don't understand each other and integration fails.",
+        "id": "q19_bus",
+        "title": "Corporate Message Chaos",
+        "problem": "Dozens of systems are connected directly to each other, forming a fragile web of integrations.",
+        "correctId": "message_bus",
+        "wrongOptions": ["client_server", "layers", "proxy"],
+        "reason": "A Message Bus standardizes communication and reduces direct system dependencies.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q15_adapter",
+        "title": "The XML Barrier",
+        "problem": "A modern system sends JSON data, but a legacy system only accepts XML.",
         "correctId": "adapter",
         "wrongOptions": ["facade", "proxy", "bridge"],
-        "reason": "The Adapter translates the interface of one component into the format expected by the other.",
+        "reason": "The Adapter pattern translates incompatible interfaces into a compatible format.",
         "difficulty": "medium"
       },
       {
-        "id": "q16_facade",
-        "title": "Too Many Calls",
-        "problem": "The Mobile App needs to make 8 different calls to build the home screen, becoming slow and draining battery.",
-        "correctId": "facade",
-        "wrongOptions": ["adapter", "singleton", "observer"],
-        "reason": "The Facade creates a simplified, single interface that groups complex backend calls.",
-        "difficulty": "medium"
-      },
-      {
-        "id": "q11_queue",
-        "title": "The Task Queue",
-        "problem": "The user uploads a photo and gets stuck on the loading screen for 30 seconds waiting for processing.",
+        "id": "q11_broker",
+        "title": "The Processing Queue",
+        "problem": "Users must wait 30 seconds after uploading a photo while the server processes it synchronously.",
         "correctId": "broker",
         "wrongOptions": ["mvc", "client_server", "p2p"],
-        "reason": "The Broker (Message Queue) decouples submission from processing, freeing the user immediately.",
+        "reason": "A Broker (Message Queue) decouples request submission from background processing.",
         "difficulty": "medium"
       }
     ]
@@ -125,46 +134,46 @@
   {
     "id": "p4_digital",
     "title": "Digital District",
-    "subtitle": "Scale or Die",
+    "subtitle": "Scale or Collapse",
     "theme": "cloud",
-    "requiredScore": 150,
-    "narrativeIntro": "The TechCity App went viral. We have millions of simultaneous hits. The central server is melting. We need elastic scalability and total decoupling.",
+    "requiredScore": 180,
+    "narrativeIntro": "ArchPatterns City has gone viral. Millions of simultaneous users are overwhelming the centralized architecture. Scalability is now a survival requirement.",
     "dominantPattern": "Distributed",
     "questions": [
       {
-        "id": "q9_success_crash",
-        "title": "Victim of Success",
-        "problem": "The e-commerce site crashed on Black Friday. The Registration module froze and took Payment down with it, because it was all one block.",
+        "id": "q9_microservices",
+        "title": "Overwhelmed by Success",
+        "problem": "During peak traffic, the entire e-commerce platform freezes because all features run as one monolithic block.",
         "correctId": "microsservicos",
         "wrongOptions": ["soa", "client_server", "monolith"],
-        "reason": "Microservices allow scaling and isolating parts of the system (e.g., scaling only Payment) independently.",
+        "reason": "Microservices allow independent scaling and isolation of system components.",
         "difficulty": "hard"
       },
       {
-        "id": "q6_async_buy",
-        "title": "The Frozen Purchase",
-        "problem": "The user clicks 'Buy' and waits 10 seconds because the Email system is slow. The process is too synchronous.",
+        "id": "q6_eda",
+        "title": "The Blocking Checkout",
+        "problem": "If the Email service is slow, the entire purchase process is delayed because everything runs synchronously.",
         "correctId": "eda",
         "wrongOptions": ["mvc", "pipe_filter", "proxy"],
-        "reason": "Event-Driven Architecture (EDA) allows asynchronous processing: 'Order Created' -> frees user -> sends email later.",
+        "reason": "Event-Driven Architecture enables asynchronous processing and loose coupling.",
         "difficulty": "hard"
       },
       {
-        "id": "q8_feed",
-        "title": "News Feed",
-        "problem": "The news publisher needs to know the exact list of all subscribers (Sports, Politics). Adding a new category breaks the publisher.",
+        "id": "q8_pubsub",
+        "title": "Rigid News Feed",
+        "problem": "The news publisher must know exactly who subscribes to each category. Adding a new category breaks the publisher logic.",
         "correctId": "pub_sub",
         "wrongOptions": ["observer", "mediator", "chain"],
-        "reason": "Publish-Subscribe decouples senders from receivers via topics.",
+        "reason": "Publish–Subscribe decouples publishers from subscribers through topics.",
         "difficulty": "hard"
       },
       {
         "id": "q12_p2p",
-        "title": "Expensive Server",
-        "problem": "Distributing a 50GB file to 1 million users will bankrupt the company in server bandwidth costs.",
+        "title": "Bandwidth Explosion",
+        "problem": "Distributing a 50GB file to one million users from a central server is financially unsustainable.",
         "correctId": "p2p",
         "wrongOptions": ["client_server", "broker", "master_slave"],
-        "reason": "Peer-to-Peer uses the users' own bandwidth to distribute content, relieving the central server.",
+        "reason": "Peer-to-Peer distributes load across users instead of relying solely on a central server.",
         "difficulty": "hard"
       }
     ]
@@ -172,46 +181,46 @@
   {
     "id": "p5_tower",
     "title": "Central Tower",
-    "subtitle": "The Coordination Chaos",
+    "subtitle": "Critical Coordination",
     "theme": "governance",
-    "requiredScore": 200,
-    "narrativeIntro": "You've reached the top. The Control Tower manages critical aviation and banking systems. Here, a coordination error costs lives or billions. Protect the core at all costs.",
-    "dominantPattern": "Orchestration",
+    "requiredScore": 220,
+    "narrativeIntro": "You’ve reached the top. The Central Tower manages mission-critical systems. Coordination, isolation, and architectural discipline are non-negotiable.",
+    "dominantPattern": "Coordination",
     "questions": [
       {
-        "id": "q18_air_control",
-        "title": "Control Tower",
-        "problem": "Several planes want to land. If they talk to each other to decide who goes first, there will be a collision.",
+        "id": "q18_mediator",
+        "title": "Air Traffic Control",
+        "problem": "Multiple airplanes try to coordinate landing among themselves, creating a high risk of collision.",
         "correctId": "mediator",
         "wrongOptions": ["observer", "facade", "proxy"],
-        "reason": "The Mediator centralizes complex many-to-many communication, coordinating the flow.",
+        "reason": "Mediator centralizes complex many-to-many communication.",
         "difficulty": "hard"
       },
       {
         "id": "q14_saga",
-        "title": "Never-ending Transaction",
-        "problem": "In microservices, we need to debit balance, reserve stock, and issue an invoice. If the invoice fails, how do we undo previous steps without locking the database?",
+        "title": "The Endless Transaction",
+        "problem": "In a distributed system, payment, stock reservation, and invoicing must occur. If invoicing fails, how can previous steps be undone without locking the entire database?",
         "correctId": "saga",
         "wrongOptions": ["two_phase_commit", "singleton", "memento"],
-        "reason": "Saga Pattern manages distributed transactions via a sequence of events and compensating actions (undo).",
+        "reason": "Saga manages distributed transactions through events and compensating actions.",
         "difficulty": "hard"
       },
       {
         "id": "q13_hexagonal",
-        "title": "The Isolated Heart",
-        "problem": "We want to test pure business rules, but the code is full of 'import HTTP' and 'import SQL'.",
+        "title": "The Isolated Core",
+        "problem": "Business logic is tightly coupled to HTTP and SQL imports, making testing difficult.",
         "correctId": "hexagonal",
         "wrongOptions": ["mvc", "layers", "microkernel"],
-        "reason": "Hexagonal Architecture (Ports & Adapters) shields the domain (core), allowing it to work without knowing if it's coming from the Web or a Test.",
+        "reason": "Hexagonal Architecture isolates the domain core from external technologies.",
         "difficulty": "hard"
       },
       {
-        "id": "q20_ai_recog",
-        "title": "Impossible Recognition",
-        "problem": "An AI system needs to recognize handwritten text, but no single algorithm is good enough. They need to collaborate.",
+        "id": "q20_blackboard",
+        "title": "The Impossible Recognition",
+        "problem": "No single algorithm can accurately recognize handwritten text. Multiple algorithms must collaborate.",
         "correctId": "blackboard",
         "wrongOptions": ["strategy", "chain", "visitor"],
-        "reason": "The Blackboard allows multiple specialist agents to contribute partially to solving a complex, non-deterministic problem.",
+        "reason": "Blackboard enables multiple specialized components to cooperatively solve complex problems.",
         "difficulty": "hard"
       }
     ]

@@ -11,28 +11,28 @@
       {
         "id": "q1_mixed",
         "title": "O Código Misturado",
-        "problem": "Um programador alterou a cor de um botão e acidentalmente quebrou a validação de senha, pois a lógica de UI e de Negócio estavam no mesmo arquivo.",
+        "problem": "Um programador foi solicitado a alterar a cor de um botão na tela de login. Para fazer isso, ele precisou editar arquivos que também continham lógica de validação de senha e comandos de banco de dados. A simples mudança visual acabou gerando um bug que corrompeu dados.",
         "correctId": "camadas",
         "wrongOptions": ["client_server", "microkernel", "pipe_filter"],
-        "reason": "A Arquitetura em Camadas separa Apresentação, Negócio e Dados, evitando que alterações visuais afetem regras críticas.",
+        "reason": "A Arquitetura em Camadas separa Apresentação, Negócio e Dados, evitando que alterações visuais afetem regras críticas ou dados.",
         "difficulty": "easy"
       },
       {
         "id": "q2_untestable",
         "title": "A Lógica Intestável",
-        "problem": "A equipe de QA não consegue testar o cálculo de juros sem subir o banco de dados e a interface web completa.",
+        "problem": "Uma equipe de testes precisa validar uma regra de cálculo de juros, mas ela está implementada dentro do código do botão da interface, exigindo banco e servidor ativos para funcionar.",
         "correctId": "camadas",
         "wrongOptions": ["mvc", "broker", "p2p"],
-        "reason": "Isolar a lógica de negócio em uma camada própria permite testes unitários rápidos sem dependências externas.",
+        "reason": "Isolar a lógica de negócio em uma camada própria permite testes unitários sem depender da interface ou banco.",
         "difficulty": "easy"
       },
       {
         "id": "q3_spreadsheet",
         "title": "A Planilha do Caos",
-        "problem": "Dois vendedores tentam salvar dados na mesma planilha Excel compartilhada na rede, sobrescrevendo o trabalho um do outro.",
+        "problem": "Uma empresa gerencia seus clientes em uma única planilha compartilhada. Quando dois vendedores salvam ao mesmo tempo, um sobrescreve o trabalho do outro.",
         "correctId": "client_server",
         "wrongOptions": ["pipe_filter", "soa", "facade"],
-        "reason": "O modelo Cliente-Servidor centraliza os dados e gerencia a concorrência de múltiplos acessos.",
+        "reason": "Cliente-Servidor centraliza os dados e controla concorrência de múltiplos acessos.",
         "difficulty": "easy"
       }
     ]
@@ -40,37 +40,46 @@
   {
     "id": "p2_commercial",
     "title": "Centro Comercial",
-    "subtitle": "O Monstro de Uma Tela Só",
+    "subtitle": "Interfaces Monstruosas",
     "theme": "corporate",
     "requiredScore": 100,
-    "narrativeIntro": "Promoção concedida. Agora você lida com sistemas corporativos legados. O problema aqui é interfaces gigantescas acopladas diretamente aos dados, tornando a manutenção um pesadelo.",
-    "dominantPattern": "MVC",
+    "narrativeIntro": "Você foi promovido. Agora enfrenta sistemas corporativos com telas gigantes e código impossível de manter. Separar responsabilidades é questão de sobrevivência.",
+    "dominantPattern": "Separation",
     "questions": [
       {
         "id": "q4_giant_file",
         "title": "O Arquivo de 5.000 Linhas",
-        "problem": "Uma única página web contém HTML, Validação de CPF e Comandos SQL. Qualquer mudança é arriscada.",
+        "problem": "Uma única página web contém HTML, validação de CPF e comandos SQL. Qualquer alteração é arriscada.",
         "correctId": "mvc",
         "wrongOptions": ["camadas", "microkernel", "proxy"],
-        "reason": "O MVC separa Model (dados), View (interface) e Controller (fluxo), organizando o caos da interface.",
+        "reason": "MVC separa Model, View e Controller, reduzindo acoplamento e facilitando manutenção.",
         "difficulty": "medium"
       },
       {
         "id": "q5_video_proc",
-        "title": "Processador Inflexível",
-        "problem": "Uma função gigante faz: resize, marca d'água e compressão de vídeo. O cliente quer agora só marca d'água, mas é impossível separar.",
+        "title": "O Processador Inflexível",
+        "problem": "Uma única função realiza resize, marca d'água e compressão de vídeo. O cliente quer usar apenas uma dessas funções.",
         "correctId": "pipe_filter",
         "wrongOptions": ["mvc", "eda", "saga"],
-        "reason": "Pipe and Filter divide o processamento em etapas independentes que podem ser recombinadas.",
+        "reason": "Pipe and Filter divide processamento em filtros independentes e reutilizáveis.",
         "difficulty": "medium"
       },
       {
-        "id": "q17_ghost_image",
+        "id": "q17_proxy",
         "title": "A Imagem Fantasma",
-        "problem": "Uma página carrega 100 fotos de alta resolução de uma vez, travando o navegador do usuário.",
+        "problem": "Uma página carrega 100 imagens de alta resolução de uma vez, demorando minutos para abrir.",
         "correctId": "proxy",
         "wrongOptions": ["adapter", "facade", "singleton"],
-        "reason": "O Virtual Proxy permite Lazy Loading, carregando as imagens pesadas apenas quando necessário.",
+        "reason": "O Proxy permite Lazy Loading de objetos pesados.",
+        "difficulty": "medium"
+      },
+      {
+        "id": "q10_microkernel",
+        "title": "O Navegador Instável",
+        "problem": "Um novo navegador quer manter o núcleo pequeno, mas adicionar bloqueador de anúncios e tradutor pode comprometer estabilidade.",
+        "correctId": "microkernel",
+        "wrongOptions": ["mvc", "layers", "broker"],
+        "reason": "Microkernel mantém núcleo mínimo e adiciona funcionalidades como plugins.",
         "difficulty": "medium"
       }
     ]
@@ -78,46 +87,46 @@
   {
     "id": "p3_industrial",
     "title": "Distrito Industrial",
-    "subtitle": "A Integração Infernal",
+    "subtitle": "Integrações em Guerra",
     "theme": "legacy",
     "requiredScore": 150,
-    "narrativeIntro": "Bem-vindo ao parque industrial. Aqui, sistemas de décadas diferentes tentam conversar. É uma teia de aranha de integrações ponto-a-ponto que falham em cascata.",
+    "narrativeIntro": "Aqui vivem os sistemas legados. Integrações frágeis e dependências diretas causam falhas em cascata.",
     "dominantPattern": "Integration",
     "questions": [
       {
-        "id": "q7_point_to_point",
-        "title": "A Teia de Aranha",
-        "problem": "O RH chama o Financeiro, que chama Vendas. Se um cai, todos caem. Adicionar um novo sistema exige mexer em todos os outros.",
+        "id": "q7_soa",
+        "title": "Integração Ponto a Ponto",
+        "problem": "RH precisa chamar Finanças e Vendas diretamente. Se um falha, todo o processo para.",
         "correctId": "soa",
         "wrongOptions": ["mvc", "microkernel", "p2p"],
-        "reason": "SOA (ou um Barramento) centraliza e padroniza a integração, evitando o acoplamento ponto-a-ponto.",
+        "reason": "SOA integra sistemas por serviços orquestrados, evitando dependências diretas.",
         "difficulty": "hard"
       },
       {
-        "id": "q15_xml_json",
-        "title": "O Tradutor Universal",
-        "problem": "O sistema moderno fala JSON. O legado fala XML. Eles não se entendem e a integração falha.",
+        "id": "q19_bus",
+        "title": "O Barramento Corporativo",
+        "problem": "Dezenas de sistemas estão conectados ponto a ponto, gerando caos de integrações frágeis.",
+        "correctId": "message_bus",
+        "wrongOptions": ["client_server", "layers", "proxy"],
+        "reason": "Message Bus padroniza comunicação entre sistemas.",
+        "difficulty": "hard"
+      },
+      {
+        "id": "q15_adapter",
+        "title": "O Legado que Recebe XML",
+        "problem": "Sistema novo envia JSON, mas legado aceita apenas XML.",
         "correctId": "adapter",
         "wrongOptions": ["facade", "proxy", "bridge"],
-        "reason": "O Adapter traduz a interface de um componente para o formato esperado pelo outro.",
+        "reason": "Adapter traduz interfaces incompatíveis.",
         "difficulty": "medium"
       },
       {
-        "id": "q16_facade",
-        "title": "Muitas Chamadas",
-        "problem": "O App Mobile precisa fazer 8 chamadas diferentes para montar a tela inicial, ficando lento e gastando bateria.",
-        "correctId": "facade",
-        "wrongOptions": ["adapter", "singleton", "observer"],
-        "reason": "A Facade cria uma interface simplificada e única que agrupa as chamadas complexas do backend.",
-        "difficulty": "medium"
-      },
-      {
-        "id": "q11_queue",
+        "id": "q11_broker",
         "title": "A Fila de Tarefas",
-        "problem": "O usuário faz upload de uma foto e fica preso na tela de carregamento por 30 segundos esperando o processamento.",
+        "problem": "Usuário faz upload e precisa esperar 30 segundos pelo processamento.",
         "correctId": "broker",
         "wrongOptions": ["mvc", "client_server", "p2p"],
-        "reason": "O Broker (Message Queue) desacopla o envio do processamento, liberando o usuário imediatamente.",
+        "reason": "Broker usa filas para desacoplar produtor e consumidor.",
         "difficulty": "medium"
       }
     ]
@@ -125,46 +134,46 @@
   {
     "id": "p4_digital",
     "title": "Distrito Digital",
-    "subtitle": "Escala ou Morte",
+    "subtitle": "Escala ou Colapso",
     "theme": "cloud",
-    "requiredScore": 150,
-    "narrativeIntro": "O App da ArchPatterns City viralizou. Temos milhões de acessos simultâneos. O servidor central está derretendo. Precisamos de escalabilidade elástica e desacoplamento total.",
+    "requiredScore": 180,
+    "narrativeIntro": "A cidade digital cresceu exponencialmente. Agora precisamos escalar sem derrubar tudo.",
     "dominantPattern": "Distributed",
     "questions": [
       {
-        "id": "q9_success_crash",
-        "title": "Vítima do Sucesso",
-        "problem": "O e-commerce caiu na Black Friday. O módulo de Cadastro travou e derrubou o Pagamento junto, pois era tudo um bloco só.",
+        "id": "q9_microservices",
+        "title": "O Sistema que Não Aguentou o Sucesso",
+        "problem": "O aplicativo explodiu em popularidade e o sistema inteiro congela nos picos.",
         "correctId": "microsservicos",
         "wrongOptions": ["soa", "client_server", "monolith"],
-        "reason": "Microsserviços permitem escalar e isolar partes do sistema (ex: escalar só o Pagamento) independentemente.",
+        "reason": "Microsserviços permitem escalar partes do sistema independentemente.",
         "difficulty": "hard"
       },
       {
-        "id": "q6_async_buy",
+        "id": "q6_eda",
         "title": "A Compra Travada",
-        "problem": "O usuário clica em 'Comprar' e espera 10 segundos porque o sistema de Email está lento. O processo é síncrono demais.",
+        "problem": "Se o sistema de Email falha, a compra inteira falha.",
         "correctId": "eda",
         "wrongOptions": ["mvc", "pipe_filter", "proxy"],
-        "reason": "Arquitetura Orientada a Eventos (EDA) permite processamento assíncrono: 'Pedido Criado' -> libera o usuário -> envia email depois.",
+        "reason": "EDA desacopla sistemas via comunicação assíncrona.",
         "difficulty": "hard"
       },
       {
-        "id": "q8_feed",
-        "title": "Feed de Notícias",
-        "problem": "O publicador de notícias precisa saber a lista exata de todos os assinantes (Esporte, Política). Se adicionar uma categoria nova, quebra o publicador.",
+        "id": "q8_pubsub",
+        "title": "Feed de Notícias Inflexível",
+        "problem": "Publicador precisa conhecer todos os assinantes e quebra ao adicionar novos.",
         "correctId": "pub_sub",
         "wrongOptions": ["observer", "mediator", "chain"],
-        "reason": "Publish-Subscribe desacopla quem envia de quem recebe através de tópicos.",
+        "reason": "Publish–Subscribe desacopla publicadores e assinantes por tópicos.",
         "difficulty": "hard"
       },
       {
         "id": "q12_p2p",
-        "title": "Servidor Caro",
-        "problem": "Distribuir um arquivo de 50GB para 1 milhão de usuários vai falir a empresa em custos de banda de servidor.",
+        "title": "Servidor Sobrecarregado",
+        "problem": "Distribuir arquivo enorme para milhões sobrecarrega servidor central.",
         "correctId": "p2p",
         "wrongOptions": ["client_server", "broker", "master_slave"],
-        "reason": "Peer-to-Peer usa a banda dos próprios usuários para distribuir o conteúdo, aliviando o servidor central.",
+        "reason": "Peer-to-Peer distribui carga entre usuários.",
         "difficulty": "hard"
       }
     ]
@@ -172,46 +181,46 @@
   {
     "id": "p5_tower",
     "title": "Torre Central",
-    "subtitle": "O Caos da Coordenação",
+    "subtitle": "Coordenação Crítica",
     "theme": "governance",
-    "requiredScore": 200,
-    "narrativeIntro": "Você chegou ao topo. A Torre de Controle gerencia sistemas críticos de aviação e bancários. Aqui, um erro de coordenação custa vidas ou bilhões. Proteja o núcleo a todo custo.",
-    "dominantPattern": "Orchestration",
+    "requiredScore": 220,
+    "narrativeIntro": "No topo da cidade estão os sistemas críticos. Coordenação e isolamento do núcleo são essenciais.",
+    "dominantPattern": "Coordination",
     "questions": [
       {
-        "id": "q18_air_control",
-        "title": "Torre de Controle",
-        "problem": "Vários aviões querem pousar. Se eles conversarem entre si para decidir quem vai primeiro, haverá colisão.",
+        "id": "q18_mediator",
+        "title": "A Torre de Controle Aéreo",
+        "problem": "Aviões tentando coordenar pouso diretamente entre si podem colidir.",
         "correctId": "mediator",
         "wrongOptions": ["observer", "facade", "proxy"],
-        "reason": "O Mediator centraliza a comunicação complexa muitos-para-muitos, coordenando o fluxo.",
+        "reason": "Mediator centraliza coordenação de múltiplas interações.",
         "difficulty": "hard"
       },
       {
         "id": "q14_saga",
-        "title": "Transação Interminável",
-        "problem": "Em microserviços, precisamos debitar saldo, reservar estoque e emitir nota. Se a nota falhar, como desfazer os passos anteriores sem travar o banco?",
+        "title": "A Transação Interminável",
+        "problem": "Se envio de e-mail falha, toda compra sofre rollback desnecessariamente.",
         "correctId": "saga",
         "wrongOptions": ["two_phase_commit", "singleton", "memento"],
-        "reason": "Saga Pattern gerencia transações distribuídas através de uma sequência de eventos e ações de compensação (undo).",
+        "reason": "Saga divide transações em etapas com compensações.",
         "difficulty": "hard"
       },
       {
         "id": "q13_hexagonal",
         "title": "O Coração Isolado",
-        "problem": "Queremos testar a regra de negócio pura, mas o código está cheio de 'import HTTP' e 'import SQL'.",
+        "problem": "Lógica de negócio depende diretamente de HTTP e SQL.",
         "correctId": "hexagonal",
         "wrongOptions": ["mvc", "layers", "microkernel"],
-        "reason": "Arquitetura Hexagonal (Ports & Adapters) blinda o domínio (núcleo), permitindo que ele funcione sem saber se vem da Web ou do Teste.",
+        "reason": "Arquitetura Hexagonal isola o núcleo da aplicação das tecnologias externas.",
         "difficulty": "hard"
       },
       {
-        "id": "q20_ai_recog",
+        "id": "q20_blackboard",
         "title": "Reconhecimento Impossível",
-        "problem": "Um sistema de IA precisa reconhecer texto manuscrito, mas nenhum algoritmo sozinho é bom o suficiente. Eles precisam colaborar.",
+        "problem": "Nenhum algoritmo sozinho resolve o reconhecimento de texto manuscrito.",
         "correctId": "blackboard",
         "wrongOptions": ["strategy", "chain", "visitor"],
-        "reason": "O Blackboard permite que vários agentes especialistas contribuam parcialmente para resolver um problema complexo e não determinístico.",
+        "reason": "Blackboard permite que múltiplos especialistas cooperem para solução emergente.",
         "difficulty": "hard"
       }
     ]
