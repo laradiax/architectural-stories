@@ -21,9 +21,8 @@ function App() {
   const soundEnabled = currentUser?.preferences?.soundEnabled ?? true;
 
   // Estado da sessão (temporário)
-  const [sessionIntegrity, setSessionIntegrity] = useState(100);
   const [sessionScore, setSessionScore] = useState(0);
-  const [lastResult, setLastResult] = useState<{passed: boolean; reason?: 'integrity'|'score'} | null>(null);
+  const [lastResult, setLastResult] = useState<{passed: boolean; reason?: 'score'} | null>(null);
   const prefs = currentUser?.preferences || { theme: 'light', language: 'pt', soundEnabled: true };
 
   //Estado para confirmações
@@ -141,7 +140,6 @@ function App() {
             t.dialogAbortMsg,
             () => {
                 setActivePhaseId(null);
-                setSessionIntegrity(100);
                 setSessionScore(0);
                 setView('map');
             },
@@ -163,7 +161,6 @@ function App() {
 
   // 2. Aceitar Missão (Começa o Jogo)
   const handleStartMission = () => {
-    setSessionIntegrity(100);
     setSessionScore(0);
     setView('game');
   };
@@ -175,23 +172,20 @@ function App() {
   };
 
   const handleIntegrityLoss = () => {
-    console.log("Dano no sistema! -20%");
-    setSessionIntegrity(prev => Math.max(0, prev - 20));
+    console.log("Erro cometido! Sem penalidade de integridade, apenas score (se houver).");
   };
 
   // 4. Fim da Fase
   const handlePhaseComplete = (score: number, passed: boolean) => {
-    const integrityPassed = sessionIntegrity > 0;
-    const finalPassed = passed && integrityPassed;
+    const finalPassed = passed;
     setSessionScore(score);
 
     if (finalPassed && activePhaseId) {
         saveProgress(activePhaseId, score);
     }
     
-    let failReason: 'integrity' | 'score' | undefined;
-    if (!integrityPassed) failReason = 'integrity';
-    else if (!passed) failReason = 'score';
+    let failReason: 'score' | undefined;
+    if (!passed) failReason = 'score';
 
     setLastResult({ passed: finalPassed, reason: failReason });
     setView('result');
@@ -200,13 +194,11 @@ function App() {
   const handleBackToMap = () => {
     setView('map');
     setActivePhaseId(null);
-    setSessionIntegrity(100); // Visual reset
   };
 
   // 5. Reinicia a Fase
   const handleRetry = () => {
     // Reinicia a mesma fase
-    setSessionIntegrity(100);
     setSessionScore(0);
     setView('game');
   };
@@ -215,7 +207,7 @@ function App() {
   const activePhase = phases.find(p => p.id === activePhaseId);
 
   const currentSession = {
-    integrity: sessionIntegrity,
+    integrity: currentUser?.integrity || 0,
     score: sessionScore,
     currentPhaseTitle: activePhase?.title || "ArchPattern City"
   };
@@ -277,7 +269,7 @@ function App() {
               failReason={lastResult.reason}
               score={sessionScore}
               requiredScore={activePhase.requiredScore}
-              integrity={sessionIntegrity}
+              integrity={currentUser.integrity}
               onContinue={handleBackToMap}
               onRetry={handleRetry}
           />

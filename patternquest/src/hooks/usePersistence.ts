@@ -10,6 +10,7 @@ const INITIAL_PROFILE_TEMPLATE: Omit<UserProfile, 'name'| 'password'> = {
     title: "Estagiário Investigador",
     level: 1,
     xp: 0,
+    integrity:0,
     avatarId: "default",
     unlockedBadges: [],
     completedPhases: [],
@@ -116,13 +117,18 @@ export const usePersistence = () => {
             const newCompletedPhases = isFirstTime 
                 ? [...currentUser.completedPhases, phaseId]
                 : currentUser.completedPhases;
+            let newIntegrity = currentUser.integrity || 0;
+            if (isFirstTime) {
+                newIntegrity = Math.min(100, newIntegrity + 25);
+            }
 
             const updatedUser: UserProfile = {
                 ...currentUser,
                 xp: newXP,
                 level: newLevel,
                 title: newTitle,
-                completedPhases: newCompletedPhases
+                completedPhases: newCompletedPhases,
+                integrity: newIntegrity
             };
 
         // Atualiza o estado atual e o banco de dados

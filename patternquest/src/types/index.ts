@@ -17,7 +17,8 @@ export interface UserProfile {
   title: PlayerTitle;
   level: number;
   avatarId: string;
-  xp: number;            
+  xp: number;
+  integrity: number;            
   unlockedBadges: string[];
   completedPhases: string[];
   preferences: UserPreferences;
