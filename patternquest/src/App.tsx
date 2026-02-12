@@ -13,7 +13,7 @@ import { Achievements } from './components/game/Achievements'; // Ajustei o nome
 import { usePersistence } from './hooks/usePersistence';
 import { useGameData } from './hooks/useGameData';
 import { useScoring } from './hooks/useScoring';
-import { playSound } from './utils/audio';
+import { playSound, playBGM, toggleBGM } from './utils/audio';
 import './styles/global.css';
 
 function App() {
@@ -56,16 +56,23 @@ function App() {
   });
 
   // Efeito de Som Global
-  useEffect(() => {
-      const handleGlobalClick = (event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-        if (target.closest('button, .option-btn, .district-card')) {
-          playSound('click.mp3', soundEnabled);
-        }
-      };
-      document.addEventListener('click', handleGlobalClick);
-      return () => document.removeEventListener('click', handleGlobalClick);
-    }, [soundEnabled]);
+    useEffect(() => {
+        playBGM('background.mp3', soundEnabled);
+      }, [soundEnabled]); // 
+
+      // 2. Efeito para o Som de Clique Global
+      useEffect(() => {
+          const handleGlobalClick = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('button, .option-btn, .district-card')) {
+              // Passa o soundEnabled ATUAL para a função
+              playSound('click.mp3', soundEnabled);
+            }
+          };
+          document.addEventListener('click', handleGlobalClick);
+          
+          return () => document.removeEventListener('click', handleGlobalClick);
+      }, [soundEnabled]);
 
   // Efeito de Tema
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React from 'react';
-import type { UserPreferences } from '../../types';
+import type { UserPreferences } from '../../types/game';
 import { translations } from '../../data/i18n';
-import './dialog.css'; // Reusa estilos do dialog
+import './dialog.css'; 
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -72,7 +72,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <input 
                         type="checkbox" 
                         checked={preferences.soundEnabled}
-                        onChange={(e) => onUpdate({ soundEnabled: e.target.checked })}
+                        onChange={(e) => onUpdate({ soundEnabled: !preferences.soundEnabled })}
                     />
                     <span className="slider round"></span>
                 </label>
