@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout } from './components/layout/Layout';
+import { Layout } from './components/layout/layout';
 import { SystemDialog } from './components/layout/SystemDialog';
 import { StartScreen } from './components/layout/StartScreen';
 import { PhaseMap } from './components/narrative/PhaseMap';

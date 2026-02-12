@@ -48,10 +48,10 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onLogin, existingUsers
             
             {/* --- LOGO / BRANDING --- */}
             <div className="game-brand">
-                <div className="brand-icon-box">
-                    <span>xxx</span>
+                <div className="brand-box">
+                    <img src="/public/images/logo.png" alt="PatternQuest Logo" className="brand-icon" />
+                    <img src="/public/images/nome.png" alt="PatternQuest Nome" className="brand-name" />
                 </div>
-                <h1>Pattern<br/><span className="brand-highlight">Quest</span></h1>
                 <p>Resolva os problemas arquiteturais e se torne um Mestre de Arquitetura de Software</p>
             </div>
 

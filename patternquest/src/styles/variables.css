@@ -1,17 +1,28 @@
+@font-face {
+    font-family: "Brixton";
+    src: url("https://db.onlinewebfonts.com/t/ac5ba0a639e5409fd5073f4892247d1c.eot");
+    src: url("https://db.onlinewebfonts.com/t/ac5ba0a639e5409fd5073f4892247d1c.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/ac5ba0a639e5409fd5073f4892247d1c.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/ac5ba0a639e5409fd5073f4892247d1c.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/ac5ba0a639e5409fd5073f4892247d1c.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/ac5ba0a639e5409fd5073f4892247d1c.svg#Brixton-Regular")format("svg");
+}
+
+
 :root {
   /* --- Paleta Base --- */
-  --bg-app: #f8fafc;        /* Branco acizentado */
+  --bg-app: #fffcd5;        /* Branco amarelado */
   --bg-card: #ffffff;       /* Branco */
   --text-primary: #0f172a;  /* Preto Suave */
   --text-secondary: #64748b;/* Cinza */
 
   /* --- Cores Semânticas (Brand) --- */
-  --color-primary: #5e17eb;       /* Roxo - Ação Principal */
-  --color-primary-hover: #5e17eba0;
+  --color-primary: #24517c;       /* Roxo - Ação Principal */
+  --color-primary-hover: #c36235; /* Laranja mais claro para hover */
   
-  --color-narrative: #f96340;     /* Laranja - Narrativa/Missão */
-  --color-tech: #0081f6;          /* Azul - Técnico/Info */
-  --color-special: #d40f77;       /* Rosa - Conquistas/Feedback */
+  --color-narrative: #c36235;     /* Laranja - Narrativa/Missão */
+  --color-tech: #6beaee;          /* Azul - Técnico/Info */
+  --color-special: #24517c;       /* Rosa - Conquistas/Feedback */
 
   /* --- Estados do Sistema --- */
   --color-success: #10b981;       /* Verde - Acerto/Integridade Alta */
@@ -25,20 +36,20 @@
   
   --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --font-main: 'Montserrat', system-ui, sans-serif;
-  --font-mono: 'Fira Sans', monospace; /* Para código */
+  --font-mono: 'Brixton', sans-serif; /* Para código */
 }
 
 body.dark-mode {
   --bg-app: #0f172a;        /* Slate-900 */
   --bg-card: #1e293b;       /* Slate-800 */
   --text-primary: #f8fafc;  /* Branco */
-  --text-secondary: #94a3b8;/* Cinza Claro */
+  --text-secondary: #fffcf2;/* Branco Amarelado */
 
-  --color-primary: #6366f1;       /* Indigo-500 (Mais brilhante) */
-  --color-primary-hover: #818cf8;
+  --color-primary: #6beaee;      
+  --color-primary-hover: #6beaee57;
   
-  --color-narrative: #fb923c;     /* Orange-400 */
-  --color-tech: #60a5fa;          /* Blue-400 */
+  --color-narrative: #c36235;     /* Orange-400 */
+  --color-tech: #6beaee;          /* Blue-400 */
   
   --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.5); /* Sombra mais forte */
 }

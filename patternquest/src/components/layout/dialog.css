@@ -80,22 +80,22 @@
   border: 1px solid #cbd5e1;
 }
 .sys-btn-ghost:hover {
-  background: white;
+  background: var(--bg-card);
   color: var(--text-primary);
   border-color: var(--text-secondary);
 }
 
 .sys-btn-danger {
   background: var(--color-danger);
-  color: white;
+  color: var(--bg-card);
 }
 .sys-btn-danger:hover { background: #dc2626; }
 
 .sys-btn-info {
   background: var(--color-tech);
-  color: white;
+  color: var(--bg-card);
 }
-.sys-btn-info:hover { background: #2563eb; }
+.sys-btn-info:hover { background: var(--color-primary);}
 
 /* Animações */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

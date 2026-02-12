@@ -101,7 +101,7 @@
 /* 3. Atual (Desbloqueado) */
 .district-card.active {
     border: 2px solid var(--color-primary);
-    background: white;
+    background: var(--bg-card);
 }
 
 .district-card.active::before {

@@ -117,7 +117,7 @@
 
 .btn-primary { 
     background-color: var(--color-primary); 
-    color: white; 
+    color: var(--bg-card); 
     box-shadow: 0 4px 0 var(--color-primary-hover);
 }
 
