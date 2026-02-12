@@ -16,6 +16,15 @@ import { useScoring } from './hooks/useScoring';
 import { playSound, playBGM, toggleBGM } from './utils/audio';
 import './styles/global.css';
 
+const getRandomQuestionsForPhase = (phase: Phase) => {
+  const total = phase.id === 'p1_garage' ? 3 : 4;
+
+  return [...phase.questions]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, total);
+};
+
+
 function App() {
   const { currentUser, saveUserData, updatePreferences, allUsers, isLoaded, login, logout, resetSave } = usePersistence();
   const { phases, patterns, t } = useGameData();
@@ -37,6 +46,8 @@ function App() {
 
   const soundEnabled = currentUser?.preferences?.soundEnabled ?? true;
   const prefs = currentUser?.preferences || { theme: 'light', language: 'pt', soundEnabled: true };
+
+  const [currentConfiguredPhase, setCurrentConfiguredPhase] = useState<any | null>(null); // Novo estado
 
   // Estado para confirmações
   const [dialogConfig, setDialogConfig] = useState<{
@@ -123,7 +134,19 @@ function App() {
     }
   };
 
-  const handleSelectPhase = (id: string) => { setActivePhaseId(id); setView('briefing'); };
+  const handleSelectPhase = (id: string) => { 
+    const basePhase = phases.find(p => p.id === id);
+    if (basePhase) {
+      // Sorteia aqui e guarda no estado
+      const configured = {
+        ...basePhase,
+        questions: getRandomQuestionsForPhase(basePhase)
+      };
+      setCurrentConfiguredPhase(configured);
+    }
+    setActivePhaseId(id); 
+    setView('briefing'); 
+  };
   
   const handleStartMission = () => { 
     setSessionScore(0);
@@ -164,7 +187,23 @@ function App() {
 
   const handleBackToMap = () => { setView('map'); setActivePhaseId(null); };
   
-  const handleRetry = () => { setSessionScore(0); setView('game');setSessionIntegrity(100); };
+  const handleRetry = () => { 
+    setSessionScore(0); 
+    setSessionIntegrity(100);
+    
+    // Sorteia novamente antes de começar
+    if (activePhaseId) {
+      const basePhase = phases.find(p => p.id === activePhaseId);
+      if (basePhase) {
+        setCurrentConfiguredPhase({
+          ...basePhase,
+          questions: getRandomQuestionsForPhase(basePhase)
+        });
+      }
+    }
+    
+    setView('game'); 
+  };
 
   const handleIntegrityLoss = () => {
       setSessionIntegrity(prev => {
@@ -181,12 +220,22 @@ function App() {
   };
 
   // --- Renderização ---
-  const activePhase = phases.find(p => p.id === activePhaseId);
+  // const activePhase = phases.find(p => p.id === activePhaseId);
+
+  // const basePhase = phases.find(p => p.id === activePhaseId);
+
+  // const activePhase = basePhase
+  //   ? {
+  //       ...basePhase,
+  //       questions: getRandomQuestionsForPhase(basePhase)
+  //     }
+  //   : null;
+
   
   const currentSession = {
       integrity: view === 'game' ? sessionIntegrity : (currentUser?.integrity || 0), // <--- LÓGICA HÍBRIDA
       score: sessionScore,
-      currentPhaseTitle: activePhase?.title || "ArchPattern City",
+      currentPhaseTitle: currentConfiguredPhase?.title || "ArchPattern City",
       scoreLabel: view === 'game' ? "Score Missão" : "XP Total"
   };
   return (
@@ -221,32 +270,32 @@ function App() {
             </>
           )}
 
-          {view === 'briefing' && activePhase && (
+          {view === 'briefing' && currentConfiguredPhase && (
             <Briefing 
-                phase={activePhase}
+                phase={currentConfiguredPhase} // Alterado aqui
                 onStartMission={handleStartMission}
                 onCancel={handleCancelBriefing}
             />
           )}
 
-          {view === 'game' && activePhase && (
+          {view === 'game' && currentConfiguredPhase && (
             <QuizEngine 
-                phase={activePhase}
+                phase={currentConfiguredPhase} // Alterado aqui
                 patterns={patterns}
                 onCompletePhase={handlePhaseComplete}
-                onScoreUpdate={setSessionScore} // Passa o setter para atualizar o HUD em tempo real
+                onScoreUpdate={setSessionScore}
                 onIntegrityLoss={handleIntegrityLoss}
                 soundEnabled={soundEnabled}
                 language={currentUser?.preferences?.language || 'pt'}
             />
           )}
 
-          {view === 'result' && activePhase && lastResult && (
+          {view === 'result' && currentConfiguredPhase && lastResult && (
             <PhaseResult 
                 passed={lastResult.passed}
                 failReason={lastResult.reason}
                 score={sessionScore}
-                requiredScore={activePhase.requiredScore}
+                requiredScore={currentConfiguredPhase.requiredScore} // Alterado aqui
                 integrity={currentUser.integrity}
                 onContinue={handleBackToMap}
                 onRetry={handleRetry}
