@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { UserProfile, UserPreferences } from '../types';
-import { calculateLevel, getTitleForLevel } from '../utils/gamification';
+import type { UserProfile, UserPreferences } from '../types/game';
+import { calculateLevel, getTitleForLevel , checkNewBadges} from '../utils/gamification';
 
 const STORAGE_KEY = 'PATTERN_QUEST_SAVE_V1';
 
@@ -37,6 +37,16 @@ export const usePersistence = () => {
         setCurrentUser(updatedUser);
         
         const newDb = { ...allUsers, [currentUser.name]: updatedUser };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newDb));
+        setAllUsers(newDb);
+    };
+
+    const saveUserData = (updatedUser: UserProfile) => {
+        if (!currentUser) return;
+        
+        setCurrentUser(updatedUser);
+        
+        const newDb = { ...allUsers, [updatedUser.name]: updatedUser };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(newDb));
         setAllUsers(newDb);
     };
@@ -121,6 +131,9 @@ export const usePersistence = () => {
             if (isFirstTime) {
                 newIntegrity = Math.min(100, newIntegrity + 25);
             }
+                // Verifica novas conquistas
+            const newBadgesFound = checkNewBadges(currentUser.unlockedBadges, currentUser.integrity || 0, newLevel);
+            const finalBadges = [...currentUser.unlockedBadges, ...newBadgesFound];
 
             const updatedUser: UserProfile = {
                 ...currentUser,
@@ -128,6 +141,7 @@ export const usePersistence = () => {
                 level: newLevel,
                 title: newTitle,
                 completedPhases: newCompletedPhases,
+                unlockedBadges: finalBadges,
                 integrity: newIntegrity
             };
 
@@ -151,6 +165,7 @@ export const usePersistence = () => {
     };
 
     return { currentUser,
+        saveUserData,
         allUsers,       
         isLoaded, 
         login, 

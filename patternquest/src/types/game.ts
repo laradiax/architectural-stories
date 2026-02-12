@@ -1,4 +1,9 @@
-// Níveis de Profissional
+// --- Tipos Básicos ---
+export interface LocalizedText {
+    pt: string;
+    en: string;
+}
+
 export type PlayerTitle = 
   | 'Estagiário Investigador' 
   | 'Desenvolvedor Júnior' 
@@ -6,44 +11,74 @@ export type PlayerTitle =
   | 'Arquiteto Sênior' 
   | 'Mestre Arquiteto';
 
-// Estrutura do Perfil do Usuário
+export type QuestionType = 'pattern_match' | 'boolean' | 'code_gap';
+
+// --- Preferências e Estatísticas ---
+export interface UserPreferences {
+    theme: 'light' | 'dark';
+    language: 'pt' | 'en';
+    soundEnabled: boolean;
+}
+
+export interface UserStats {
+    totalQuestions: number;
+    totalCorrect: number;
+    totalTime: number;
+    consecutiveCorrect: number;
+    phasesReplayed: number;
+}
+
+// --- Perfil do Usuário (Completo) ---
 export interface UserProfile {
-  name: string;
-  title: PlayerTitle;
-  level: number;
-  xp: number;
-  unlockedBadges: string[]; // IDs das conquistas
-  completedPhases: string[]; // IDs das fases
+    name: string;
+    password?: string;
+    title: PlayerTitle;
+    level: number;
+    xp: number;
+    integrity: number;       // Vida Global (0-100)
+    avatarId: string;        // Avatar
+    stats: UserStats;        // Estatísticas
+    unlockedBadges: string[]; // Conquistas
+    completedPhases: string[];
+    preferences: UserPreferences;
 }
 
-// Estrutura de uma Questão
+// --- Conteúdo do Jogo (Fases e Questões) ---
 export interface Question {
-  id: string;
-  title: string;
-  problem: string;
-  correctId: string; // ID do padrão correto
-  wrongOptions: string[]; // IDs dos padrões incorretos
-  reason: string; // Explicação técnica
-  difficulty: 'easy' | 'medium' | 'hard';
+    id: string;
+    type?: QuestionType;
+    title: LocalizedText;
+    problem: LocalizedText;
+    codeSnippet?: string;
+    correctId: string;
+    wrongOptions: string[];
+    reason: LocalizedText;
+    difficulty: 'easy' | 'medium' | 'hard';
 }
 
-// Estrutura de uma Fase
 export interface Phase {
-  id: string;
-  title: string;
-  subtitle: string;
-  narrativeIntro: string;
-  dominantPattern: string; // ex: 'Layers'
-  requiredScore: number;
-  questions: Question[];
+    id: string;
+    title: LocalizedText;
+    subtitle: LocalizedText;
+    narrativeIntro: LocalizedText;
+    dominantPattern: string;
+    requiredScore: number;
+    theme: string;
+    questions: Question[];
 }
 
-// Estrutura do Padrão (Biblioteca)
 export interface Pattern {
-  id: string;
-  name: string;
-  desc: string;
-  pros: string;
-  cons: string;
-  type: 'structural' | 'distributed' | 'messaging'; // Categorização opcional
+    id: string;
+    name: LocalizedText;
+    desc: LocalizedText;
+    pros: LocalizedText;
+    cons: LocalizedText;
+    type: 'structural' | 'distributed' | 'messaging' | 'anti-pattern' | 'interface' | 'creation' | 'behavioral' | 'integration' | 'data' | 'transactional';
+}
+
+// --- Sessão Temporária ---
+export interface GameSession {
+    integrity: number;
+    score: number;
+    currentPhaseTitle: LocalizedText | string;
 }

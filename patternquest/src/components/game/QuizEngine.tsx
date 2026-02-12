@@ -1,50 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import type { Phase, Pattern } from '../../types/game';
+import React, { useState, useEffect, useRef } from 'react';
+import type { Phase, Pattern, LocalizedText } from '../../types/game';
 import { playSound } from '../../utils/audio';
-
 import './game.css';
 
 interface QuizEngineProps {
   phase: Phase;
   patterns: Pattern[];
   soundEnabled: boolean;
-  onCompletePhase: (score: number, passed: boolean) => void;
-  onIntegrityLoss: () => void; // Callback para reduzir vida no App principal
+  onCompletePhase: (score: number, passed: boolean, stats: { correct: number; total: number; timeLeft: number }) => void;
+  language: 'pt' | 'en';
+  onScoreUpdate?: (newScore: number) => void;
+  onIntegrityLoss?: () => void;
 }
 
 export const QuizEngine: React.FC<QuizEngineProps> = ({ 
   phase,
   patterns,
   onCompletePhase,
-  onIntegrityLoss,
-  soundEnabled 
+  soundEnabled,
+  language = 'pt',
+  onScoreUpdate,
+  onIntegrityLoss
 }) => {
   const [currentQIndex, setCurrentQIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30); // 30 segundos por questão
+  const [timeLeft, setTimeLeft] = useState(30);
   const [isAnswered, setIsAnswered] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [phaseScore, setPhaseScore] = useState(0);
-  const [options, setOptions] = useState<any[]>([]); // Opções embaralhadas
+  const [options, setOptions] = useState<any[]>([]);
+  
+  // Refs para acumular stats sem re-renderizar
+  const statsRef = useRef({ correct: 0, timeLeftTotal: 0 });
 
   const currentQuestion = phase.questions[currentQIndex];
 
-  const getPatternName = (id: string) => {
-    const pattern = patterns.find(p => p.id === id);
-    return pattern ? pattern.name : id.toUpperCase(); // Fallback se não achar
+  const getTxt = (obj: LocalizedText | string) => {
+    if (typeof obj === 'string') return obj;
+    return obj[language] || obj['pt'];
   };
 
-  // 1. Setup da Questão (Embaralhar opções)
+  const getPatternName = (id: string) => {
+    const pattern = patterns.find(p => p.id === id);
+    return pattern ? getTxt(pattern.name) : id.toUpperCase();
+  };
+
+  // 1. Setup da Questão
   useEffect(() => {
     if (!currentQuestion) return;
     
-    // Mistura a correta com as erradas
     const allOptions = [
       { id: currentQuestion.correctId, label: 'Correto', isCorrect: true },
       ...currentQuestion.wrongOptions.map(opt => ({ id: opt, label: opt, isCorrect: false }))
     ].sort(() => Math.random() - 0.5); 
 
     setOptions(allOptions);
-    setTimeLeft(30); // Reseta timer
+    setTimeLeft(30);
     setIsAnswered(false);
     setSelectedOption(null);
 
@@ -53,11 +63,7 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
   // 2. Timer
   useEffect(() => {
     if (isAnswered || timeLeft <= 0) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-
+    const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft, isAnswered]);
 
@@ -66,32 +72,42 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
     if (isAnswered) return;
     
     setIsAnswered(true);
-    setSelectedOption(optionId);
+    setSelectedOption(optionId); 
 
     if (isCorrect) {
-      // Calcular Pontuação baseada no Tempo
+      // Pontuação
       let points = 50;
-      if (timeLeft > 20) points = 100; // Rápido (<10s gastos)
-      else if (timeLeft > 10) points = 70; // Médio
+      if (timeLeft > 20) points = 100;
+      else if (timeLeft > 10) points = 70;
 
-      setPhaseScore(prev => prev + points);
-      // Som de Sucesso aqui
+      setPhaseScore(prev => {
+          const newScore = prev + points;
+          if (onScoreUpdate) onScoreUpdate(newScore); // <--- AVISA O APP AQUI
+          return newScore;
+      });
       playSound('success.mp3', soundEnabled);
+      
+      // Atualiza Stats Ref
+      statsRef.current.correct += 1;
+      statsRef.current.timeLeftTotal += timeLeft;
+
     } else {
-      // Erro
-      onIntegrityLoss();
-      // Som de Erro aqui
       playSound('error.mp3', soundEnabled);
+      if (onIntegrityLoss) onIntegrityLoss();
     }
 
-    // Avançar automaticamente após 2 segundos
+    // Avançar
     setTimeout(() => {
       if (currentQIndex < phase.questions.length - 1) {
         setCurrentQIndex(prev => prev + 1);
       } else {
-        // Fim da Fase
-        const passed = phaseScore >= phase.requiredScore; // Lógica simples por enquanto
-        onCompletePhase(phaseScore, passed);
+        // FIM DA FASE
+        const passed = phaseScore >= phase.requiredScore; // Lógica simples
+        onCompletePhase(phaseScore, passed, {
+            correct: statsRef.current.correct,
+            total: phase.questions.length,
+            timeLeft: statsRef.current.timeLeftTotal
+        });
       }
     }, 2000);
   };
@@ -101,7 +117,6 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
   return (
     <div className="quiz-container animate-enter">
       
-      {/* Cabeçalho com Timer */}
       <div className="quiz-header">
         <span className="question-meta">
           Caso {currentQIndex + 1} / {phase.questions.length}
@@ -115,26 +130,24 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
         <span className="question-meta">{timeLeft}s</span>
       </div>
 
-      {/* Pergunta */}
       <div className="problem-card">
-        <h2>{currentQuestion.title}</h2>
-        <p className="problem-text">{currentQuestion.problem}</p>
+        <h2>{getTxt(currentQuestion.title)}</h2>
+        <p className="problem-text">{getTxt(currentQuestion.problem)}</p>
       </div>
 
-      {/* Opções */}
       <div className="options-grid">
         {options.map((opt) => {
           let btnClass = 'option-btn';
           if (isAnswered) {
-            if (opt.isCorrect) btnClass += ' correct'; // Sempre mostra a correta
-            else if (selectedOption === opt.id) btnClass += ' wrong'; // Mostra erro se selecionado
+            if (opt.isCorrect) btnClass += ' correct'; 
+            else if (selectedOption === opt.id) btnClass += ' wrong'; 
           }
 
           return (
             <button
               key={opt.id}
               className={btnClass}
-              onClick={() => handleAnswer(opt.id, opt.isCorrect)}
+              onClick={() => handleAnswer(opt.id, opt.isCorrect)} 
               disabled={isAnswered}
             >
               {getPatternName(opt.id)}
@@ -145,8 +158,8 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
       {isAnswered && (
         <div className="feedback-panel animate-enter">
-            <p className="text-center mt-4 font-bold text-slate-500 bg-slate-100 p-4 rounded-lg border border-slate-200">
-                💡{currentQuestion.reason}
+            <p className="feedback-text">
+                💡 {getTxt(currentQuestion.reason)}
             </p>
         </div>
       )}

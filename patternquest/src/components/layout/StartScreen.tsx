@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { UserProfile } from '../../types';
+import type { UserProfile } from '../../types/game';
 import './start.css';
 
 interface StartScreenProps {
@@ -264,7 +264,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onLogin, existingUsers
                         </div>
                         <div className="manual-scroll-area">
                             <div className="flow-grid" style={{gridTemplateColumns: '1fr'}}>
-                                {t.map(p => (
+                                {t.map((p: any) => (
                                     <div key={p.id} className="flow-step-card" style={{borderLeft: '4px solid var(--color-tech)'}}>
                                         <h4 style={{color: 'var(--color-tech)', fontSize: '1.2rem', fontWeight: 'bold'}}>{p.name}</h4>
                                         <p>{p.desc}</p>

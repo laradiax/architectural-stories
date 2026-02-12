@@ -5,34 +5,47 @@ import { StartScreen } from './components/layout/StartScreen';
 import { PhaseMap } from './components/narrative/PhaseMap';
 import { QuizEngine } from './components/game/QuizEngine';
 import { PhaseResult } from './components/game/PhaseResult';
-import { usePersistence } from './hooks/usePersistence';
 import { Briefing } from './components/narrative/Briefing';
 import { SettingsModal } from './components/layout/SettingsModal';
+import { Leaderboard } from './components/game/Leaderboard'; 
+import { Achievements } from './components/game/Achievements'; // Ajustei o nome para o padrão
+
+import { usePersistence } from './hooks/usePersistence';
 import { useGameData } from './hooks/useGameData';
-import './styles/global.css';
+import { useScoring } from './hooks/useScoring';
 import { playSound } from './utils/audio';
+import './styles/global.css';
 
 function App() {
-  const { currentUser, updatePreferences, allUsers, isLoaded, login, logout, saveProgress, resetSave } = usePersistence();
+  const { currentUser, saveUserData, updatePreferences, allUsers, isLoaded, login, logout, resetSave } = usePersistence();
   const { phases, patterns, t } = useGameData();
-  const [view, setView] = useState<'start' |'map' | 'briefing' | 'game' | 'result'>('map');
-  const [activePhaseId, setActivePhaseId] = useState<string | null>(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const soundEnabled = currentUser?.preferences?.soundEnabled ?? true;
+  const { processPhaseResult } = useScoring();
 
-  // Estado da sessão (temporário)
+  // Estados de Navegação e UI
+  const [view, setView] = useState<'start' | 'map' | 'briefing' | 'game' | 'result'>('start');
+  const [activePhaseId, setActivePhaseId] = useState<string | null>(null);
+  
+  // Modais
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
+
+  // Estados da Sessão Atual
   const [sessionScore, setSessionScore] = useState(0);
-  const [lastResult, setLastResult] = useState<{passed: boolean; reason?: 'score'} | null>(null);
+  const [lastResult, setLastResult] = useState<{passed: boolean; reason?: 'score' | 'integrity'} | null>(null);
+  const [sessionIntegrity, setSessionIntegrity] = useState(100);
+
+  const soundEnabled = currentUser?.preferences?.soundEnabled ?? true;
   const prefs = currentUser?.preferences || { theme: 'light', language: 'pt', soundEnabled: true };
 
-  //Estado para confirmações
+  // Estado para confirmações
   const [dialogConfig, setDialogConfig] = useState<{
     isOpen: boolean;
     title: string;
     message: string;
     type: 'info' | 'danger' | 'success';
     isConfirmation: boolean;
-    onConfirmAction: () => void; // Guarda a função que será executada
+    onConfirmAction: () => void;
   }>({
     isOpen: false,
     title: '',
@@ -42,21 +55,19 @@ function App() {
     onConfirmAction: () => {},
   });
 
+  // Efeito de Som Global
   useEffect(() => {
-    const handleGlobalClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
+      const handleGlobalClick = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        if (target.closest('button, .option-btn, .district-card')) {
+          playSound('click.mp3', soundEnabled);
+        }
+      };
+      document.addEventListener('click', handleGlobalClick);
+      return () => document.removeEventListener('click', handleGlobalClick);
+    }, [soundEnabled]);
 
-      // Verifica se o clique ocorreu dentro de um botão
-      if (target) {
-        playSound('click.mp3', soundEnabled);
-      }
-    };
-
-    document.addEventListener('click', handleGlobalClick);
-    return () => document.removeEventListener('click', handleGlobalClick);
-  }, [soundEnabled]);
-
-  //Efeito para aplicar tema
+  // Efeito de Tema
   useEffect(() => {
     if (prefs.theme === 'dark') {
         document.body.classList.add('dark-mode');
@@ -65,174 +76,126 @@ function App() {
     }
   }, [currentUser?.preferences?.theme]);
 
-  // Efeito para navegar baseado no estado do login
-    useEffect(() => {
+  // Efeito de Login
+  useEffect(() => {
       if (currentUser) {
-          // Se acabou de logar e estava na tela inicial, vai pro mapa
           if (view === 'start') setView('map');
       } else {
-          // Se deslogou, volta pro início
           setView('start');
       }
     }, [currentUser]);
 
-  if (!isLoaded) return <div className="app-container flex-center">Carregando perfil...</div>;
+  if (!isLoaded) return <div className="app-container flex-center">Carregando sistema...</div>;
 
-  // Funcções de controle (config, sair, voltar)
+  // --- Funções de Controle ---
 
-    // Helper para abrir o diálogo facilmente
   const showConfirm = (title: string, message: string, action: () => void, type: 'danger' | 'info' = 'info') => {
-    setDialogConfig({
-      isOpen: true,
-      title,
-      message,
-      type,
-      isConfirmation: true,
-      onConfirmAction: action
-    });
+    setDialogConfig({ isOpen: true, title, message, type, isConfirmation: true, onConfirmAction: action });
   };
 
-  const showAlert = (title: string, message: string) => {
-    setDialogConfig({
-      isOpen: true,
-      title,
-      message,
-      type: 'info',
-      isConfirmation: false,
-      onConfirmAction: () => setDialogConfig(prev => ({ ...prev, isOpen: false }))
-    });
-  };
+  const closeDialog = () => setDialogConfig(prev => ({ ...prev, isOpen: false }));
+  
+  const handleDialogConfirm = () => { dialogConfig.onConfirmAction(); closeDialog(); };
 
-  const closeDialog = () => {
-    setDialogConfig(prev => ({ ...prev, isOpen: false }));
-  };
-
-  const handleDialogConfirm = () => {
-    dialogConfig.onConfirmAction();
-    closeDialog();
-  };
-
-  const handleLogin = (username: string, password: string) => {
-    return login(username, password); 
-  };
+  const handleLogin = (u: string, p: string) => login(u, p);
 
   const handleLogout = () => {
-    showConfirm(
-      t.dialogLogoutTitle,
-      t.dialogLogoutMsg,
-      () => {
-        logout();
-        setView('start');
-      },
-      'danger'
-    );
-  };
-
-  const handleSettings = () => {
-    setIsSettingsOpen(true);
+    showConfirm(t.dialogLogoutTitle, t.dialogLogoutMsg, () => { logout(); setView('start'); }, 'danger');
   };
 
   const handleReturnToMap = () => {
-    // Se estiver JOGANDO, precisa confirmar para não perder progresso sem querer
     if (view === 'game') {
-        showConfirm(
-            t.dialogAbortTitle,
-            t.dialogAbortMsg,
-            () => {
-                setActivePhaseId(null);
-                setSessionScore(0);
-                setView('map');
-            },
-            'danger'
-        );
+        showConfirm(t.dialogAbortTitle, t.dialogAbortMsg, () => {
+            setActivePhaseId(null);
+            setSessionScore(0);
+            setView('map');
+        }, 'danger');
     } else {
-        // Se estiver no Briefing ou Resultado, volta direto
         setActivePhaseId(null);
         setView('map');
     }
   };
 
-  // 1. Selecionar Fase (Abre Briefing)
-  const handleSelectPhase = (phaseId: string) => {
-    console.log(`Fase selecionada: ${phaseId}`);
-    setActivePhaseId(phaseId);
-    setView('briefing');
-  };
-
-  // 2. Aceitar Missão (Começa o Jogo)
-  const handleStartMission = () => {
+  const handleSelectPhase = (id: string) => { setActivePhaseId(id); setView('briefing'); };
+  
+  const handleStartMission = () => { 
     setSessionScore(0);
+    setSessionIntegrity(100); // <--- RESET
     setView('game');
   };
+  
+  const handleCancelBriefing = () => { setActivePhaseId(null); setView('map'); };
 
-  // 3. Cancelar no Briefing
-  const handleCancelBriefing = () => {
-    setActivePhaseId(null);
-    setView('map');
-  };
-
-  const handleIntegrityLoss = () => {
-    console.log("Erro cometido! Sem penalidade de integridade, apenas score (se houver).");
-  };
-
-  // 4. Fim da Fase
-  const handlePhaseComplete = (score: number, passed: boolean) => {
+  // --- Lógica de Fim de Fase ---
+  const handlePhaseComplete = (score: number, passed: boolean, stats: any) => {
     const finalPassed = passed;
     setSessionScore(score);
 
-    if (finalPassed && activePhaseId) {
-        saveProgress(activePhaseId, score);
+    if (finalPassed && activePhaseId && currentUser) {
+        // Processa XP e Conquistas
+        const { updatedUser, newBadges } = processPhaseResult(currentUser, {
+            phaseId: activePhaseId,
+            score: score,
+            correctCount: stats.correct,
+            totalQuestions: stats.total,
+            timeLeftTotal: stats.timeLeft,
+            isReplay: currentUser.completedPhases.includes(activePhaseId)
+        });
+
+        // Salva
+        saveUserData(updatedUser);
+
+        if (newBadges.length > 0) {
+            console.log("Conquistas:", newBadges);
+            // Opcional: Mostrar modal de conquista
+        }
     }
     
-    let failReason: 'score' | undefined;
-    if (!passed) failReason = 'score';
-
-    setLastResult({ passed: finalPassed, reason: failReason });
+    setLastResult({ passed: finalPassed, reason: passed ? undefined : 'score' });
     setView('result');
   };
 
-  const handleBackToMap = () => {
-    setView('map');
-    setActivePhaseId(null);
+  const handleBackToMap = () => { setView('map'); setActivePhaseId(null); };
+  
+  const handleRetry = () => { setSessionScore(0); setView('game');setSessionIntegrity(100); };
+
+  const handleIntegrityLoss = () => {
+      setSessionIntegrity(prev => {
+          const newVal = Math.max(0, prev - 50);
+          
+          if (newVal === 0) {
+              setTimeout(() => {
+                  setLastResult({ passed: false, reason: 'integrity' }); // Motivo: integridade
+                  setView('result');
+              }, 1000);
+          }
+          return newVal;
+      });
   };
 
-  // 5. Reinicia a Fase
-  const handleRetry = () => {
-    // Reinicia a mesma fase
-    setSessionScore(0);
-    setView('game');
-  };
-
-  // Encontra o objeto da fase atual
+  // --- Renderização ---
   const activePhase = phases.find(p => p.id === activePhaseId);
-
+  
   const currentSession = {
-    integrity: currentUser?.integrity || 0,
-    score: sessionScore,
-    currentPhaseTitle: activePhase?.title || "ArchPattern City"
+      integrity: view === 'game' ? sessionIntegrity : (currentUser?.integrity || 0), // <--- LÓGICA HÍBRIDA
+      score: sessionScore,
+      currentPhaseTitle: activePhase?.title || "ArchPattern City",
+      scoreLabel: view === 'game' ? "Score Missão" : "XP Total"
   };
-
   return (
     <>
-      {/* TELA DE LOGIN / START */}
-      {!currentUser && (
-        <StartScreen 
-            onLogin={handleLogin}
-            existingUsers={allUsers} // Passamos a lista para o menu
-        />
-      )}
+      {!currentUser && <StartScreen onLogin={handleLogin} existingUsers={allUsers} />}
 
-      {/* ÁREA LOGADA */}
       {currentUser && (
         <Layout 
             user={currentUser} 
             session={currentSession}
             onLogout={handleLogout}
-            onSettings={handleSettings}
+            onSettings={() => setIsSettingsOpen(true)}
+            onShowRanking={() => setIsLeaderboardOpen(true)} 
             onBackToMap={handleReturnToMap}
             isMapActive={view === 'map'}
         >
-          
           {view === 'map' && (
             <>
                 <PhaseMap
@@ -240,42 +203,52 @@ function App() {
                   completedPhases={currentUser.completedPhases} 
                   onSelectPhase={handleSelectPhase} 
                 />
-                <div style={{textAlign: 'center', marginTop: '2rem'}}>
-                    <button onClick={resetSave} style={{fontSize: '0.7rem', cursor: 'pointer', opacity: 0.5}}>
-                        [DEBUG] Resetar Tudo
+                <button onClick={() => setIsAchievementsOpen(true)} className="sys-btn sys-btn-info">
+                  🏅 Ver Conquistas
+                </button>
+                <div style={{textAlign: 'center', marginTop: '2rem', display:'flex', gap:'1rem', justifyContent:'center'}}>
+                    <button onClick={resetSave} style={{fontSize: '0.7rem', cursor: 'pointer', opacity: 0.5, background:'none', border:'none', color:'#fff'}}>
+                        [Reset]
                     </button>
                 </div>
             </>
           )}
-        {view === 'briefing' && activePhase && (
-          <Briefing 
-              phase={activePhase}
-              onStartMission={handleStartMission}
-              onCancel={handleCancelBriefing}
-          />
-        )}
-        {view === 'game' && activePhase && (
-          <QuizEngine 
-            phase={activePhase}
-            patterns={patterns}
-            onIntegrityLoss={handleIntegrityLoss}
-            onCompletePhase={handlePhaseComplete}
-            soundEnabled={soundEnabled}
-          />
-        )}
-        {view === 'result' && activePhase && lastResult && (
-          <PhaseResult 
-              passed={lastResult.passed}
-              failReason={lastResult.reason}
-              score={sessionScore}
-              requiredScore={activePhase.requiredScore}
-              integrity={currentUser.integrity}
-              onContinue={handleBackToMap}
-              onRetry={handleRetry}
-          />
-        )}
-      </Layout>
+
+          {view === 'briefing' && activePhase && (
+            <Briefing 
+                phase={activePhase}
+                onStartMission={handleStartMission}
+                onCancel={handleCancelBriefing}
+            />
+          )}
+
+          {view === 'game' && activePhase && (
+            <QuizEngine 
+                phase={activePhase}
+                patterns={patterns}
+                onCompletePhase={handlePhaseComplete}
+                onScoreUpdate={setSessionScore} // Passa o setter para atualizar o HUD em tempo real
+                onIntegrityLoss={handleIntegrityLoss}
+                soundEnabled={soundEnabled}
+                language={currentUser?.preferences?.language || 'pt'}
+            />
+          )}
+
+          {view === 'result' && activePhase && lastResult && (
+            <PhaseResult 
+                passed={lastResult.passed}
+                failReason={lastResult.reason}
+                score={sessionScore}
+                requiredScore={activePhase.requiredScore}
+                integrity={currentUser.integrity}
+                onContinue={handleBackToMap}
+                onRetry={handleRetry}
+            />
+          )}
+        </Layout>
       )}
+
+      {/* Modais Globais */}
       <SystemDialog 
         isOpen={dialogConfig.isOpen}
         title={dialogConfig.title}
@@ -285,12 +258,24 @@ function App() {
         onConfirm={handleDialogConfirm}
         onCancel={closeDialog}
       />
+
       {currentUser && (
           <SettingsModal 
             isOpen={isSettingsOpen}
             preferences={currentUser.preferences}
             onUpdate={updatePreferences}
             onClose={() => setIsSettingsOpen(false)}
+          />
+      )}
+
+      {isLeaderboardOpen && (
+          <Leaderboard onClose={() => setIsLeaderboardOpen(false)} />
+      )}
+
+      {isAchievementsOpen && currentUser && (
+          <Achievements 
+            unlockedIds={currentUser.unlockedBadges} 
+            onClose={() => setIsAchievementsOpen(false)} 
           />
       )}
     </>

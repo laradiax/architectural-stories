@@ -13,7 +13,7 @@
 .sys-modal-card {
   background: var(--bg-card);
   width: 90%;
-  max-width: 400px;
+  max-width: 600px;
   border-radius: var(--radius-lg);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
@@ -92,10 +92,10 @@
 .sys-btn-danger:hover { background: #dc2626; }
 
 .sys-btn-info {
-  background: var(--color-tech);
+  background: var(--color-primary);
   color: var(--bg-card);
 }
-.sys-btn-info:hover { background: var(--color-primary);}
+.sys-btn-info:hover { background: var(--color-tech);}
 
 /* Animações */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
