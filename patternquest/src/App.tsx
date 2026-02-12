@@ -10,6 +10,7 @@ import { Briefing } from './components/narrative/Briefing';
 import { SettingsModal } from './components/layout/SettingsModal';
 import { useGameData } from './hooks/useGameData';
 import './styles/global.css';
+import { playSound } from './utils/audio';
 
 function App() {
   const { currentUser, updatePreferences, allUsers, isLoaded, login, logout, saveProgress, resetSave } = usePersistence();
@@ -17,6 +18,7 @@ function App() {
   const [view, setView] = useState<'start' |'map' | 'briefing' | 'game' | 'result'>('map');
   const [activePhaseId, setActivePhaseId] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const soundEnabled = currentUser?.preferences?.soundEnabled ?? true;
 
   // Estado da sessão (temporário)
   const [sessionIntegrity, setSessionIntegrity] = useState(100);
@@ -40,6 +42,20 @@ function App() {
     isConfirmation: false,
     onConfirmAction: () => {},
   });
+
+  useEffect(() => {
+    const handleGlobalClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      // Verifica se o clique ocorreu dentro de um botão
+      if (target) {
+        playSound('click.mp3', soundEnabled);
+      }
+    };
+
+    document.addEventListener('click', handleGlobalClick);
+    return () => document.removeEventListener('click', handleGlobalClick);
+  }, [soundEnabled]);
 
   //Efeito para aplicar tema
   useEffect(() => {
@@ -252,6 +268,7 @@ function App() {
             patterns={patterns}
             onIntegrityLoss={handleIntegrityLoss}
             onCompletePhase={handlePhaseComplete}
+            soundEnabled={soundEnabled}
           />
         )}
         {view === 'result' && activePhase && lastResult && (

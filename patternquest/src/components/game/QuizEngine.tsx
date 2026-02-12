@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import type { Phase, Pattern } from '../../types/game';
+import { playSound } from '../../utils/audio';
+
 import './game.css';
 
 interface QuizEngineProps {
   phase: Phase;
   patterns: Pattern[];
+  soundEnabled: boolean;
   onCompletePhase: (score: number, passed: boolean) => void;
   onIntegrityLoss: () => void; // Callback para reduzir vida no App principal
 }
@@ -13,7 +16,8 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
   phase,
   patterns,
   onCompletePhase,
-  onIntegrityLoss 
+  onIntegrityLoss,
+  soundEnabled 
 }) => {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30); // 30 segundos por questão
@@ -72,10 +76,12 @@ export const QuizEngine: React.FC<QuizEngineProps> = ({
 
       setPhaseScore(prev => prev + points);
       // Som de Sucesso aqui
+      playSound('success.mp3', soundEnabled);
     } else {
       // Erro
       onIntegrityLoss();
       // Som de Erro aqui
+      playSound('error.mp3', soundEnabled);
     }
 
     // Avançar automaticamente após 2 segundos
